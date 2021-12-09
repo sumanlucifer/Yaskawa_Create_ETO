@@ -83,48 +83,50 @@ sap.ui.define([
 			};
 			var itemModel = new JSONModel(itemData);
 			this.setModel(itemModel, "itemModelName");
-			
-			var newItemToAdd = {results:[{
-				"itemNo": "",
+
+			var newItemToAdd = {
+				results: [{
+					"itemNo": "",
 					"matNo": "",
 					"panel": "",
 					"itemNotes": ""
-			}]};
+				}]
+			};
 			var newItemModel = new JSONModel(newItemToAdd);
 			this.setModel(newItemModel, "newItemModelName");
-			
+
 			var hpsTableData = {
 				results: [{
 					"lineNo": "10",
 					"field": "NB15842427A",
 					"dataType": "Z1D",
 					"example": "z1D1B011PNG(2R) Schematic start NB15676557-21 Layout NB15676557A"
-				},{
+				}, {
 					"lineNo": "10",
 					"field": "NB15842427A",
 					"dataType": "Z1D",
 					"example": "z1D1B011PNG(2R) Schematic start NB15676557-21 Layout NB15676557A"
-				},{
+				}, {
 					"lineNo": "10",
 					"field": "NB15842427A",
 					"dataType": "Z1D",
 					"example": "z1D1B011PNG(2R) Schematic start NB15676557-21 Layout NB15676557A"
-				},{
+				}, {
 					"lineNo": "10",
 					"field": "NB15842427A",
 					"dataType": "Z1D",
 					"example": "z1D1B011PNG(2R) Schematic start NB15676557-21 Layout NB15676557A"
-				},{
+				}, {
 					"lineNo": "10",
 					"field": "NB15842427A",
 					"dataType": "Z1D",
 					"example": "z1D1B011PNG(2R) Schematic start NB15676557-21 Layout NB15676557A"
-				},{
+				}, {
 					"lineNo": "10",
 					"field": "NB15842427A",
 					"dataType": "Z1D",
 					"example": "z1D1B011PNG(2R) Schematic start NB15676557-21 Layout NB15676557A"
-				},{
+				}, {
 					"lineNo": "10",
 					"field": "NB15842427A",
 					"dataType": "Z1D",
@@ -133,8 +135,7 @@ sap.ui.define([
 			};
 			var hpsTableDataModel = new JSONModel(hpsTableData);
 			this.setModel(hpsTableDataModel, "hpsTableDataModelName");
-			
-			
+
 			// this.getView().byId("idClarifyOrder").setVisible(false);
 			// this.getView().byId("idItemsTable2").setVisible(false);
 			//         this.getView().byId("idRequoteOrder").setVisible(false);
@@ -434,7 +435,7 @@ sap.ui.define([
 			}
 			return this._oDialogAttachment;
 		},
-		onAttchmentPress: function(){
+		onAttchmentPress: function () {
 			this._getAttachmentDialog().open();
 			sap.ui.getCore().byId("idAppEngUploadCollection").removeAllItems();
 		},
@@ -479,20 +480,22 @@ sap.ui.define([
 			});
 
 		},
-		onAddNewItemPress: function(oEvent){
-			var newItemToAdd = {results:[{
-				"itemNo": "",
+		onAddNewItemPress: function (oEvent) {
+			var newItemToAdd = {
+				results: [{
+					"itemNo": "",
 					"matNo": "",
 					"panel": "",
 					"itemNotes": ""
-			}]};
+				}]
+			};
 			var newItemModel = new JSONModel(newItemToAdd);
 			this.setModel(newItemModel, "newItemModelName");
 			var oView = this.getView();
 			oView.byId("idItemSubSection").setVisible(false);
 			oView.byId("idAddNewItem").setVisible(true);
 		},
-		onAddNewItemToTable: function(oEvent){
+		onAddNewItemToTable: function (oEvent) {
 			var oView = this.getView();
 			var itemTable = oView.byId("idItemsTable");
 			// var itemNumber = idItemNumber
@@ -507,19 +510,19 @@ sap.ui.define([
 			// }]};
 			// var newItemModel = new JSONModel(newItemToAdd);
 			// this.setModel(newItemModel, "newItemModelName");
-			if(itemTable.getItems().length){
-			var newItemTableData = oView.getModel("newItemModelName").getData().results;
-			oView.getModel("itemModelName").getData().results.push(newItemTableData[0]);
-			oView.getModel("itemModelName").refresh();	
-			}else{
-			var newItemModel = new JSONModel(oView.getModel("newItemModelName"));
-			this.setModel(newItemModel, "newItemModelName");
+			if (itemTable.getItems().length) {
+				var newItemTableData = oView.getModel("newItemModelName").getData().results;
+				oView.getModel("itemModelName").getData().results.push(newItemTableData[0]);
+				oView.getModel("itemModelName").refresh();
+			} else {
+				var newItemModel = new JSONModel(oView.getModel("newItemModelName"));
+				this.setModel(newItemModel, "newItemModelName");
 			}
-			
+
 			oView.byId("idItemSubSection").setVisible(true);
 			oView.byId("idAddNewItem").setVisible(false);
 		},
-		onAddItemCancel: function(){
+		onAddItemCancel: function () {
 			var oView = this.getView();
 			oView.byId("idItemSubSection").setVisible(true);
 			oView.byId("idAddNewItem").setVisible(false);
