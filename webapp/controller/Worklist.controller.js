@@ -68,7 +68,8 @@ sap.ui.define([
 			Promise.allSettled([this.readChecklistEntity("/ETODistributionChannelSet"),
 				this.readChecklistEntity("/ETOOrderTypeSet"),
 				this.readChecklistEntity("/ETOTypeOfApplSet"),
-				this.readChecklistEntity("/ETOTypeOfOrderSet")
+				this.readChecklistEntity("/ETOTypeOfOrderSet"),
+				this.readChecklistEntity("/ETOOrderStatusSet")
 			]).then(this.buildChecklist.bind(this)).catch(function (error) {}.bind(this));
 
 		},
@@ -96,11 +97,13 @@ sap.ui.define([
 			var orderTypeSetDD = values[1].value.results;
 			var typoofApplicationDD = values[2].value.results;
 			var typoofOrderDD = values[3].value.results;
+			var orderStatusSetDD = values[4].value.results;
 			this.getModel("HeaderDetailsModel").setSizeLimit(5000);
 			this.getModel("HeaderDetailsModel").setProperty("/distributionChannelDD", distributionChannelDD);
 			this.getModel("HeaderDetailsModel").setProperty("/orderTypeSetDD", orderTypeSetDD);
 			this.getModel("HeaderDetailsModel").setProperty("/typoofApplicationDD", typoofApplicationDD);
 			this.getModel("HeaderDetailsModel").setProperty("/typoofOrderDD", typoofOrderDD);
+			this.getModel("HeaderDetailsModel").setProperty("/orderStatusSetDD", orderStatusSetDD);
 
 		},
 
@@ -179,11 +182,12 @@ sap.ui.define([
 				"Vtweg": oSalesData.distributionChannelKey,
 				"QuotationNo": oSalesData.QuotationNo,
 				"TotalNetValue": oSalesData.TotalNetValue,
-				"OrderStatus": oSalesData.OrderStatus,
+				"OrderStatus": oSalesData.orderStatusSetKey,
 				"OrderType": oSalesData.orderTypeSetKey,
 				"TypeApp": oSalesData.typoofApplicationKey,
 				"TypeOrder": oSalesData.typoofOrderKey,
-				"NoSalesOrder": oSalesData.NoSalesOrder
+				"NoSalesOrder": oSalesData.NoSalesOrder,
+				"Notes": oSalesData.Notes
 			};
 
 			this.getOwnerComponent().getModel().create("/ETOHeaderDetailSet", oPayload, {
@@ -199,6 +203,51 @@ sap.ui.define([
 					// 	sap.m.MessageBox.error("Something went Wrong!");
 				}.bind(this),
 			});
+		},
+
+		onAttachmentChange: function (oEvent) {
+			// keep a reference of the uploaded file
+
+			var oFiles = oEvent.getParameters().files;
+			var that = this;
+			this.oFiles = oFiles;
+			var fileName = oFiles[0].name;
+
+			var fileType = oFiles[0].type;
+
+			fileType = fileType === "application/pdf" ? "application/pdf" : "application/octet-stream";
+
+			var fileSize = oFiles[0].size;
+			for (var i = 0; i < oFiles.length; i++) {
+				var fileName = oFiles[i].name;
+				var fileSize = oFiles[i].size;
+				this._getImageData(URL.createObjectURL(oFiles[i]), function (base64) {
+					// 	that._addData(base64, fileName, fileType, fileSize, rowObj, oFiles);
+					that.Content = btoa(encodeURI(base64));
+
+				}, fileName);
+			}
+		},
+		_getImageData: function (url, callback, fileName) {
+			var xhr = new XMLHttpRequest();
+			xhr.onload = function () {
+				var reader = new FileReader();
+				var fileByteArray = [];
+				reader.readAsArrayBuffer(xhr.response);
+				reader.onloadend = function (evt) {
+					if (evt.target.readyState == FileReader.DONE) {
+						var arrayBuffer = evt.target.result,
+							array = new Int8Array(arrayBuffer);
+						for (var i = 0; i < array.length; i++) {
+							fileByteArray.push(array[i]);
+						}
+						callback(fileByteArray);
+					}
+				}
+			};
+			xhr.open('GET', url);
+			xhr.responseType = 'blob';
+			xhr.send();
 		},
 
 		onPress: function (oEvent) {

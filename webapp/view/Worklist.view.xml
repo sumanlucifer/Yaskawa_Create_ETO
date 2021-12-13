@@ -115,8 +115,8 @@
 													<m:Label text="Order Status" width="10rem"/>
 													<m:Text id="idGlAccTxt" text=":" class="sapUiTinyMarginBeginEnd"></m:Text>
 													<m:VBox width="100%">
-														<m:ComboBox width="100%" items="">
-															<core:Item key="" text=""/>
+														<m:ComboBox width="100%" selectedKey="{HeaderDetailsModel>/orderStatusSetKey}" items="{HeaderDetailsModel>/orderStatusSetDD}">
+															<core:Item key="{HeaderDetailsModel>DomValue}" text="{HeaderDetailsModel>Ddtext}"/>
 														</m:ComboBox>
 													</m:VBox>
 												</m:HBox>
@@ -172,9 +172,9 @@
 											</m:VBox>
 											<m:VBox>
 												<m:UploadCollection id="UploadCollection" maximumFilenameLength="55" maximumFileSize="10" multiple="true" sameFilenameAllowed="true"
-													instantUpload="false" noDataDescription="Drop files or use the &quot;Add&quot; button to keep files ready for upload" change="onChange"
-													fileDeleted="onFileDeleted" filenameLengthExceed="onFilenameLengthExceed" fileSizeExceed="onFileSizeExceed" typeMissmatch="onTypeMissmatch"
-													uploadComplete="onUploadComplete" beforeUploadStarts="onBeforeUploadStarts"/>
+													instantUpload="false" noDataDescription="Drop files or use the &quot;Add&quot; button to keep files ready for upload"
+													change="onAttachmentChange" fileDeleted="onFileDeleted" filenameLengthExceed="onFilenameLengthExceed" fileSizeExceed="onFileSizeExceed"
+													typeMissmatch="onTypeMissmatch" uploadComplete="onUploadComplete" beforeUploadStarts="onBeforeUploadStarts"/>
 												<!--<m:Button id="Button" text="Upload Now" press="onStartUpload" />-->
 											</m:VBox>
 										</m:VBox>
@@ -188,7 +188,7 @@
 									<blocks>
 										<m:VBox class="sapUiTinyMargin" renderType="Bare">
 											<m:Label text="Write notes here"/>
-											<m:TextArea id="TextArea2" cols="200" height="100px"/>
+											<m:TextArea id="TextArea2" value="{HeaderDetailsModel>/Notes}" cols="200" height="100px"/>
 										</m:VBox>
 									</blocks>
 								</ObjectPageSubSection>
