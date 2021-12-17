@@ -2,11 +2,10 @@
 	xmlns:u="sap.ui.unified" xmlns:blockcolor="sap.uxap.sample.SharedBlocks" xmlns:html="http://www.w3.org/1999/xhtml"
 	controllerName="com.yaskawa.ETOWorkFlow.controller.Worklist" height="100%" busyIndicatorDelay="10" xmlns:l="sap.ui.layout">
 	<m:App busyIndicatorDelay="10" id="Main">
-		<m:Page title="{i18n>worklistTitle}" busy="{objectViewModel>/busy}" showNavButton="false" showHeader="false" id="CREATE"
-			navButtonPress="onBack">
+		<m:Page busy="{objectViewModel>/busy}" showNavButton="false" showHeader="false" id="CREATE" navButtonPress="onBack">
 			<m:content>
 				<ObjectPageLayout id="ObjectPageLayout" subSectionLayout="{ConfigModel>/subSectionLayout}" useIconTabBar="true" flexEnabled="true"
-					showTitleInHeaderContent="true" upperCaseAnchorBar="false">
+					showTitleInHeaderContent="false" upperCaseAnchorBar="false">
 					<headerTitle class="zhdrclass">
 						<ObjectPageHeader objectTitle="Create ETO (Inside Sales)"/>
 					</headerTitle>
@@ -42,14 +41,16 @@
 													<m:Text id="idOrdrDate" text=":" class="sapUiTinyMarginBeginEnd"></m:Text>
 													<m:VBox width="100%">
 														<!--<m:Input id="idOrdDate" value="{HeaderDetailsModel>/OrderDate}" width="100%" editable="true"/>-->
-														<m:DatePicker value="{path:'HeaderDetailsModel>/OrderDate',formatOptions: { pattern: 'yyyy-MM-dd' } }"/>
+														<m:DatePicker displayFormat="MM/dd/YYYY" valueFormat="yyyyMMdd"
+															value="{path:'HeaderDetailsModel>/OrderDate', type: 'sap.ui.model.type.DateTime',formatOptions: { pattern: 'MM-dd-yyyy' } }"/>
 													</m:VBox>
 												</m:HBox>
 												<m:HBox width="100%" alignItems="Center" class="sapUiSmallMarginBegin">
 													<m:Label width="10rem" text="Ship Date"/>
 													<m:Text id="idShipDate" text=":" class="sapUiTinyMarginBeginEnd"></m:Text>
 													<m:VBox width="100%">
-														<m:DatePicker value="{path:'HeaderDetailsModel>/ShipDate', formatOptions: { pattern: 'yyyy-MM-dd' } }"/>
+														<m:DatePicker displayFormat="MM/dd/YYYY" valueFormat="yyyyMMdd"
+															value="{path:'HeaderDetailsModel>/ShipDate', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'MM-dd-yyyy' } }"/>
 														<!--<m:Input id="idShpDate" value="{HeaderDetailsModel>/ShipDate}" width="100%" editable="true"/>-->
 													</m:VBox>
 												</m:HBox>
@@ -92,7 +93,7 @@
 												</m:HBox>
 												<m:HBox width="100%" alignItems="Center" class="sapUiSmallMarginBegin">
 													<m:Label text="Quotation Number" width="10rem"/>
-													<!--<m:Text id="idNetPriceTxt" text=":" class="sapUiTinyMarginBeginEnd"></m:Text>-->
+													<m:Text id="idNetPriceTxt" text=":" class="sapUiTinyMarginBeginEnd"></m:Text>
 													<m:VBox width="100%">
 														<m:Input id="idShrtTrxt" width="100%" value="{HeaderDetailsModel>/QuotationNo}" maxLength="40"/>
 													</m:VBox>
@@ -120,15 +121,15 @@
 														</m:ComboBox>
 													</m:VBox>
 												</m:HBox>
-												<m:HBox width="100%" alignItems="Center" class="sapUiSmallMarginBegin">
-													<m:Label id="idCstCntreLbl" text="Order Type" width="10rem"/>
-													<m:Text id="idCstCntreTxt" text=":" class="sapUiTinyMarginBeginEnd"></m:Text>
-													<m:VBox width="100%">
-														<m:ComboBox width="100%" selectedKey="{HeaderDetailsModel>/orderTypeSetKey}" items="{HeaderDetailsModel>/orderTypeSetDD}">
-															<core:Item key="{HeaderDetailsModel>Auart}" text="{HeaderDetailsModel>Auart}"/>
-														</m:ComboBox>
-													</m:VBox>
-												</m:HBox>
+												<!--<m:HBox width="100%" alignItems="Center" class="sapUiSmallMarginBegin">-->
+												<!--	<m:Label id="idCstCntreLbl" text="Order Type" width="10rem"/>-->
+												<!--	<m:Text id="idCstCntreTxt" text=":" class="sapUiTinyMarginBeginEnd"></m:Text>-->
+												<!--	<m:VBox width="100%">-->
+												<!--		<m:ComboBox width="100%" selectedKey="{HeaderDetailsModel>/orderTypeSetKey}" items="{HeaderDetailsModel>/orderTypeSetDD}">-->
+												<!--			<core:Item key="{HeaderDetailsModel>Auart}" text="{HeaderDetailsModel>Auart}"/>-->
+												<!--		</m:ComboBox>-->
+												<!--	</m:VBox>-->
+												<!--</m:HBox>-->
 											</l:Grid>
 											<l:Grid containerQuery="true" defaultSpan="XL4 L4 M4 S4" class="sapUiSizeCompact sapUiMediumMarginTop">
 												<m:VBox class="sapUiSmallMarginBegin" width="100%">

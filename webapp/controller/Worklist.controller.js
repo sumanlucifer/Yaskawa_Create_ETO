@@ -33,17 +33,21 @@ sap.ui.define([
 				delay: 0
 			});
 			this.setModel(oViewModel, "objectViewModel");
+
+			var oUploadCollection = this.getView().byId('UploadCollection');
+			oUploadCollection.setUploadUrl("/sap/opu/odata/sap/ZFILE_EX_SRV/FileSet");
+
 		},
 		_createHeaderDetailsModel: function () {
 			var oModel = new JSONModel({
 				distributionChannelDD: [],
 				distributionChannelKey: "",
 				orderTypeSetDD: [],
-				orderTypeSetKey: "",
+
 				typoofApplicationDD: [],
-				typoofApplicationKey: "02",
+				typoofApplicationKey: "",
 				typoofOrderDD: [],
-				typoofOrderKey: "01",
+				typoofOrderKey: "",
 				ReqestedBy: "",
 				QuotationNo: "",
 				OrderDate: null,
@@ -66,7 +70,6 @@ sap.ui.define([
 		callDropDownService: function () {
 			this.getModel("objectViewModel").setProperty("/busy", true);
 			Promise.allSettled([this.readChecklistEntity("/ETODistributionChannelSet"),
-				this.readChecklistEntity("/ETOOrderTypeSet"),
 				this.readChecklistEntity("/ETOTypeOfApplSet"),
 				this.readChecklistEntity("/ETOTypeOfOrderSet"),
 				this.readChecklistEntity("/ETOOrderStatusSet")
@@ -94,13 +97,11 @@ sap.ui.define([
 		buildChecklist: function (values) {
 			this.getModel("objectViewModel").setProperty("/busy", false);
 			var distributionChannelDD = values[0].value.results;
-			var orderTypeSetDD = values[1].value.results;
-			var typoofApplicationDD = values[2].value.results;
-			var typoofOrderDD = values[3].value.results;
-			var orderStatusSetDD = values[4].value.results;
+			var typoofApplicationDD = values[1].value.results;
+			var typoofOrderDD = values[2].value.results;
+			var orderStatusSetDD = values[3].value.results;
 			this.getModel("HeaderDetailsModel").setSizeLimit(5000);
 			this.getModel("HeaderDetailsModel").setProperty("/distributionChannelDD", distributionChannelDD);
-			this.getModel("HeaderDetailsModel").setProperty("/orderTypeSetDD", orderTypeSetDD);
 			this.getModel("HeaderDetailsModel").setProperty("/typoofApplicationDD", typoofApplicationDD);
 			this.getModel("HeaderDetailsModel").setProperty("/typoofOrderDD", typoofOrderDD);
 			this.getModel("HeaderDetailsModel").setProperty("/orderStatusSetDD", orderStatusSetDD);
@@ -163,6 +164,7 @@ sap.ui.define([
 			this.getModel("HeaderDetailsModel").setProperty("/TypeOrder", data.TypeOrder);
 			this.getModel("HeaderDetailsModel").setProperty("/NoSalesOrder", data.NoSalesOrder);
 			this.getModel("HeaderDetailsModel").setProperty("/CustPo", data.CustPo);
+			this.getModel("HeaderDetailsModel").setProperty("/distributionChannelKey", data.Vtweg);
 
 		},
 		onPressSubmit: function () {
@@ -183,7 +185,6 @@ sap.ui.define([
 				"QuotationNo": oSalesData.QuotationNo,
 				"TotalNetValue": oSalesData.TotalNetValue,
 				"OrderStatus": oSalesData.orderStatusSetKey,
-				"OrderType": oSalesData.orderTypeSetKey,
 				"TypeApp": oSalesData.typoofApplicationKey,
 				"TypeOrder": oSalesData.typoofOrderKey,
 				"NoSalesOrder": oSalesData.NoSalesOrder,
@@ -195,7 +196,7 @@ sap.ui.define([
 					this.getModel("objectViewModel").setProperty("/busy", false);
 					this._createHeaderDetailsModel();
 
-					sap.m.MessageBox.success("The Sale order has been succesfully created!");
+					sap.m.MessageBox.success("The Sale order has been sent for approval!");
 
 				}.bind(this),
 				error: function (oError) {
@@ -205,49 +206,22 @@ sap.ui.define([
 			});
 		},
 
-		onAttachmentChange: function (oEvent) {
-			// keep a reference of the uploaded file
+		onBeforeUploadStarts: function (oEvent) {
+			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
+				name: "slug",
+				value: oEvent.getParameter("fileName")
+			});
+			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
+			var oModel = this.getView().getModel();
+			oModel.refreshSecurityToken();
+			var oHeaders = oModel.oHeaders;
+			var sToken = oHeaders['x-csrf-token'];
+			var oCustomerHeaderToken = new sap.m.UploadCollectionParameter({
+				name: "x-csrf-token",
+				value: sToken
+			});
+			oEvent.getParameters().addHeaderParameter(oCustomerHeaderToken);
 
-			var oFiles = oEvent.getParameters().files;
-			var that = this;
-			this.oFiles = oFiles;
-			var fileName = oFiles[0].name;
-
-			var fileType = oFiles[0].type;
-
-			fileType = fileType === "application/pdf" ? "application/pdf" : "application/octet-stream";
-
-			var fileSize = oFiles[0].size;
-			for (var i = 0; i < oFiles.length; i++) {
-				var fileName = oFiles[i].name;
-				var fileSize = oFiles[i].size;
-				this._getImageData(URL.createObjectURL(oFiles[i]), function (base64) {
-					// 	that._addData(base64, fileName, fileType, fileSize, rowObj, oFiles);
-					that.Content = btoa(encodeURI(base64));
-
-				}, fileName);
-			}
-		},
-		_getImageData: function (url, callback, fileName) {
-			var xhr = new XMLHttpRequest();
-			xhr.onload = function () {
-				var reader = new FileReader();
-				var fileByteArray = [];
-				reader.readAsArrayBuffer(xhr.response);
-				reader.onloadend = function (evt) {
-					if (evt.target.readyState == FileReader.DONE) {
-						var arrayBuffer = evt.target.result,
-							array = new Int8Array(arrayBuffer);
-						for (var i = 0; i < array.length; i++) {
-							fileByteArray.push(array[i]);
-						}
-						callback(fileByteArray);
-					}
-				}
-			};
-			xhr.open('GET', url);
-			xhr.responseType = 'blob';
-			xhr.send();
 		},
 
 		onPress: function (oEvent) {
