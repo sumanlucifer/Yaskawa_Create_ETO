@@ -13,7 +13,7 @@
 						<m:VBox alignItems="Center">
 							<m:HBox class="sapUiSmallMarginBegin" width="100%">
 								<m:Label text="{i18n>salesOrder}" width="100px" textAlign="Left" required="true" design="Bold" class="sapUiTinyMarginEnd"/>
-								<m:Input id="idSaleOrderInput" value=""></m:Input>
+								<m:Input id="idSaleOrderInput" value="{HeaderDetailsModel>/Vbeln}"></m:Input>
 								<m:Button press="onSearchSaleOrder" id="btnSaleOrder" text="GO"></m:Button>
 							</m:HBox>
 							<m:HBox class="sapUiSmallMarginBegin sapUiSmallMarginTop" width="100%">
@@ -114,11 +114,10 @@
 												</m:HBox>
 												<m:HBox width="100%" alignItems="Center" class="sapUiSmallMarginBegin">
 													<m:Label text="Order Status" width="10rem"/>
-													<m:Text id="idGlAccTxt" text=":" class="sapUiTinyMarginBeginEnd"></m:Text>
+													<m:Text id="idGlAccTxt" text=":" class="sapUiTinyMarginBegin"></m:Text>
 													<m:VBox width="100%">
-														<m:ComboBox width="100%" selectedKey="{HeaderDetailsModel>/orderStatusSetKey}" items="{HeaderDetailsModel>/orderStatusSetDD}">
-															<core:Item key="{HeaderDetailsModel>DomValue}" text="{HeaderDetailsModel>Ddtext}"/>
-														</m:ComboBox>
+														<m:Input enabled="false" id="idwGlAcc2" placeholder="" value="{HeaderDetailsModel>/orderStatusSetKey}" class="sapUiTinyMarginBegin"
+															width="100%"/>
 													</m:VBox>
 												</m:HBox>
 												<!--<m:HBox width="100%" alignItems="Center" class="sapUiSmallMarginBegin">-->
@@ -182,8 +181,9 @@
 													noDataDescription="Drop files or use the '+' button for pending upload" change="onChange" fileDeleted="onFileDelete"
 													beforeUploadStarts="onBeforeUploadStarts" uploadComplete="onUploadComplete">
 													<m:items>
-														<m:UploadCollectionItem fileName="{Filename}" mimeType="{Mimetype}" url="{Url}" enableEdit="false" documentId="{Attach}" enableDelete="true"
-															visibleDelete="false" visibleEdit="false"></m:UploadCollectionItem>
+														<m:UploadCollectionItem fileName="{Filename}" mimeType="{Mimetype}"
+															url="{parts: ['localAttachmentModel>/Filename','localAttachmentModel>/Filecontent']}" enableEdit="false" documentId="{Attach}"
+															enableDelete="true" visibleDelete="false" visibleEdit="false"></m:UploadCollectionItem>
 													</m:items>
 												</m:UploadCollection>
 											</m:VBox>
@@ -216,7 +216,6 @@
 						<m:Button text="Approve" width="100px" id="Approve" type="Accept" tooltip="Approve" press="completeCpar" visible="false"/>
 						<m:Button text="Reject" width="100px" id="Reject" type="Reject" tooltip="Reject" press="rejectCpar" visible="false"/>
 						<m:Button text="Submit" width="100px" id="Complete" type="Emphasized" press="onPressSubmit" tooltip="Complete"/>
-						<m:Button text="Upload" width="100px" id="Cdomplete" type="Emphasized" press="_checkFileUpload" tooltip="Complete"/>
 					</m:contentRight>
 				</m:Bar>
 			</m:footer>

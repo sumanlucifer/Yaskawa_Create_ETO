@@ -27,9 +27,6 @@ sap.ui.define([
 			this._createHeaderDetailsModel();
 			this.callDropDownService();
 			this._createAttachmentsModel();
-			this.getAttachments();
-
-			var URL = "/sap/opu/odata/sap/ZETO_CREATE_SRV/FileAttachmentSet(Vbeln='0010562790')/";
 
 		},
 
@@ -111,33 +108,16 @@ sap.ui.define([
 			var distributionChannelDD = values[0].value.results;
 			var typoofApplicationDD = values[1].value.results;
 			var typoofOrderDD = values[2].value.results;
-			var orderStatusSetDD = values[3].value.results;
 
 			this.getModel("HeaderDetailsModel").setSizeLimit(5000);
 			this.getModel("HeaderDetailsModel").setProperty("/distributionChannelDD", distributionChannelDD);
 			this.getModel("HeaderDetailsModel").setProperty("/typoofApplicationDD", typoofApplicationDD);
 			this.getModel("HeaderDetailsModel").setProperty("/typoofOrderDD", typoofOrderDD);
-			this.getModel("HeaderDetailsModel").setProperty("/orderStatusSetDD", orderStatusSetDD);
 
 		},
 
 		handleChecklistError: function (reason) {
 			//handle errors			
-		},
-
-		onUpdateFinished: function (oEvent) {
-			// update the worklist's object counter after the table update
-			var sTitle,
-				oTable = oEvent.getSource(),
-				iTotalItems = oEvent.getParameter("total");
-			// only update the counter if the length is final and
-			// the table is not empty
-			if (iTotalItems && oTable.getBinding("items").isLengthFinal()) {
-				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
-			} else {
-				sTitle = this.getResourceBundle().getText("worklistTableTitle");
-			}
-			this.getModel("worklistView").setProperty("/worklistTableTitle", sTitle);
 		},
 
 		onSearchSaleOrder: function () {
@@ -179,13 +159,15 @@ sap.ui.define([
 			this.getModel("HeaderDetailsModel").setProperty("/NoSalesOrder", data.NoSalesOrder);
 			this.getModel("HeaderDetailsModel").setProperty("/CustPo", data.CustPo);
 			this.getModel("HeaderDetailsModel").setProperty("/distributionChannelKey", data.Vtweg);
+			this.getModel("HeaderDetailsModel").setProperty("/orderStatusSetKey", data.OrderStatus);
 
 		},
 		getAttachments: function ()
 
 		{
 			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
-			this.getOwnerComponent().getModel().read("/FileAttachmentSet(Vbeln='0010562790')", {
+			var url = `/FileAttachmentSet(Vbeln='${sSaleOrderNo}')`;
+			this.getOwnerComponent().getModel().read(url, {
 
 				success: function (oData, oResponse) {
 					this.getModel("objectViewModel").setProperty("/busy", false);
@@ -243,36 +225,6 @@ sap.ui.define([
 			});
 		},
 
-		_checkFileUpload: function () {
-			var that = this;
-			var file = this.oFiles;
-			var serviceUrl = "/sap/opu/odata/sap/ZETO_CREATE_SRV/FileAttachmentSet(Vbeln='0000454481')";
-			var sUrl = serviceUrl;
-			jQuery.ajax({
-				method: "PUT",
-				url: sUrl,
-				cache: false,
-				async: false,
-				contentType: file[0].type,
-				processData: false,
-				data: file[0],
-				success: function (data) {
-
-					that.getComponentModel().refresh();
-					that.getModel("objectViewModel").setProperty(
-						"/busy",
-						false
-					);
-				},
-				error: function () {
-					that.getModel("objectViewModel").setProperty(
-						"/busy",
-						false
-					);
-				},
-			});
-		},
-
 		onAttachmentChange: function (oEvent) {
 
 			var oFiles = oEvent.getParameters().files;
@@ -307,22 +259,6 @@ sap.ui.define([
 		onNavBack: function () {
 			// eslint-disable-next-line sap-no-history-manipulation
 			history.go(-1);
-		},
-
-		onSearch: function (oEvent) {
-			if (oEvent.getParameters().refreshButtonPressed) {
-
-				this.onRefresh();
-			} else {
-				var aTableSearchState = [];
-				var sQuery = oEvent.getParameter("query");
-
-				if (sQuery && sQuery.length > 0) {
-					aTableSearchState = [new Filter("CompanyCode", FilterOperator.Contains, sQuery)];
-				}
-				this._applySearch(aTableSearchState);
-			}
-
 		},
 
 		/**
