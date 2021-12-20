@@ -3,8 +3,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"../model/formatter",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function (BaseController, JSONModel, formatter, Filter, FilterOperator) {
+	"sap/ui/model/FilterOperator",
+	"sap/m/UploadCollectionParameter",
+	"sap/m/MessageBox"
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, UploadCollectionParameter, MessageBox) {
 	"use strict";
 
 	return BaseController.extend("com.yaskawa.ETOWorkFlow.controller.Worklist", {
@@ -24,6 +26,10 @@ sap.ui.define([
 			this.createInitialModel();
 			this._createHeaderDetailsModel();
 			this.callDropDownService();
+			this._createAttachmentsModel();
+			this.getAttachments();
+
+			var URL = "/sap/opu/odata/sap/ZETO_CREATE_SRV/FileAttachmentSet(Vbeln='0010562790')/";
 
 		},
 
@@ -33,9 +39,6 @@ sap.ui.define([
 				delay: 0
 			});
 			this.setModel(oViewModel, "objectViewModel");
-
-			var oUploadCollection = this.getView().byId('UploadCollection');
-			oUploadCollection.setUploadUrl("/sap/opu/odata/sap/ZFILE_EX_SRV/FileSet");
 
 		},
 		_createHeaderDetailsModel: function () {
@@ -65,6 +68,15 @@ sap.ui.define([
 
 			});
 			this.setModel(oModel, "HeaderDetailsModel");
+		},
+
+		_createAttachmentsModel: function () {
+			var oModel = new JSONModel({
+				attachmentSet: [],
+				distributionChannelKey: ""
+
+			});
+			this.setModel(oModel, "AttachmentsModel");
 		},
 
 		callDropDownService: function () {
@@ -100,6 +112,7 @@ sap.ui.define([
 			var typoofApplicationDD = values[1].value.results;
 			var typoofOrderDD = values[2].value.results;
 			var orderStatusSetDD = values[3].value.results;
+
 			this.getModel("HeaderDetailsModel").setSizeLimit(5000);
 			this.getModel("HeaderDetailsModel").setProperty("/distributionChannelDD", distributionChannelDD);
 			this.getModel("HeaderDetailsModel").setProperty("/typoofApplicationDD", typoofApplicationDD);
@@ -143,6 +156,7 @@ sap.ui.define([
 				success: function (oData, oResponse) {
 					this.getModel("objectViewModel").setProperty("/busy", false);
 					this.databuilding(oData.results[0]);
+					this.getAttachments();
 				}.bind(this),
 				error: function (oError) {
 					this.getModel("objectViewModel").setProperty("/busy", false);
@@ -166,6 +180,29 @@ sap.ui.define([
 			this.getModel("HeaderDetailsModel").setProperty("/CustPo", data.CustPo);
 			this.getModel("HeaderDetailsModel").setProperty("/distributionChannelKey", data.Vtweg);
 
+		},
+		getAttachments: function ()
+
+		{
+			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
+			this.getOwnerComponent().getModel().read("/FileAttachmentSet(Vbeln='0010562790')", {
+
+				success: function (oData, oResponse) {
+					this.getModel("objectViewModel").setProperty("/busy", false);
+					var s = [];
+					s.push(oData);
+
+					this.getModel("AttachmentsModel").setProperty("/attachmentSet", s);
+
+				}.bind(this),
+				error: function (oError) {
+					this.getModel("objectViewModel").setProperty("/busy", false);
+
+				}.bind(this),
+			});
+		},
+		onFileNameLengthExceed: function () {
+			MessageBox.error("File name length exceeded, Please upload file with name lenght upto 100 characters.");
 		},
 		onPressSubmit: function () {
 			this.getModel("objectViewModel").setProperty("/busy", true);
@@ -206,22 +243,60 @@ sap.ui.define([
 			});
 		},
 
-		onBeforeUploadStarts: function (oEvent) {
-			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
-				name: "slug",
-				value: oEvent.getParameter("fileName")
-			});
-			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
-			var oModel = this.getView().getModel();
-			oModel.refreshSecurityToken();
-			var oHeaders = oModel.oHeaders;
-			var sToken = oHeaders['x-csrf-token'];
-			var oCustomerHeaderToken = new sap.m.UploadCollectionParameter({
-				name: "x-csrf-token",
-				value: sToken
-			});
-			oEvent.getParameters().addHeaderParameter(oCustomerHeaderToken);
+		_checkFileUpload: function () {
+			var that = this;
+			var file = this.oFiles;
+			var serviceUrl = "/sap/opu/odata/sap/ZETO_CREATE_SRV/FileAttachmentSet(Vbeln='0000454481')";
+			var sUrl = serviceUrl;
+			jQuery.ajax({
+				method: "PUT",
+				url: sUrl,
+				cache: false,
+				async: false,
+				contentType: file[0].type,
+				processData: false,
+				data: file[0],
+				success: function (data) {
 
+					that.getComponentModel().refresh();
+					that.getModel("objectViewModel").setProperty(
+						"/busy",
+						false
+					);
+				},
+				error: function () {
+					that.getModel("objectViewModel").setProperty(
+						"/busy",
+						false
+					);
+				},
+			});
+		},
+
+		onAttachmentChange: function (oEvent) {
+
+			var oFiles = oEvent.getParameters().files;
+			this.oFiles = oFiles;
+			this._updateDocumentService(oFiles);
+
+		},
+
+		_updateDocumentService: function (oFiles) {
+			this.getModel("objectViewModel").setProperty("/busy", true);
+			var file = this.oFiles;
+
+			var sPath = "/FileAttachmentSet(Vbeln='0000454481')";
+			this.getOwnerComponent().getModel().update(sPath, file[0], {
+				success: function (oData, oResponse) {
+
+					this.getView().getModel().refresh();
+
+				}.bind(this),
+				error: function (oError) {
+					this.getModel("objectViewModel").setProperty("/busy", false);
+
+				}.bind(this),
+			});
 		},
 
 		onPress: function (oEvent) {

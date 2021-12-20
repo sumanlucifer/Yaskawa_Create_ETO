@@ -172,11 +172,20 @@
 													text="To add files, you can also use drag &amp; drop on your desktop or tablet."/>
 											</m:VBox>
 											<m:VBox>
-												<m:UploadCollection id="UploadCollection" maximumFilenameLength="55" maximumFileSize="10" multiple="true" sameFilenameAllowed="true"
-													instantUpload="false" noDataDescription="Drop files or use the &quot;Add&quot; button to keep files ready for upload"
-													change="onAttachmentChange" fileDeleted="onFileDeleted" filenameLengthExceed="onFilenameLengthExceed" fileSizeExceed="onFileSizeExceed"
-													typeMissmatch="onTypeMissmatch" uploadComplete="onUploadComplete" beforeUploadStarts="onBeforeUploadStarts"/>
-												<!--<m:Button id="Button" text="Upload Now" press="onStartUpload" />-->
+												<!--<m:UploadCollection id="UploadCollection" maximumFilenameLength="55" maximumFileSize="10" multiple="true" sameFilenameAllowed="true"-->
+												<!--	instantUpload="false" uploadEnabled="true" uploadUrl="/sap/opu/odata/sap/ZETO_CREATE_SRV/FileAttachmentSet(Vbeln='0010562790')/$value"-->
+												<!--	noDataDescription="Drop files or use the &quot;Add&quot; button to keep files ready for upload" change="onAttachmentChange"-->
+												<!--	fileDeleted="onFileDeleted" filenameLengthExceed="onFilenameLengthExceed" fileSizeExceed="onFileSizeExceed" typeMissmatch="onTypeMissmatch"-->
+												<!--	uploadComplete="onUploadComplete" beforeUploadStarts="onBeforeUploadStarts"/>-->
+												<m:UploadCollection id="oUploadCollection" filenameLengthExceed="onFileNameLengthExceed" maximumFilenameLength="100" multiple="true"
+													showSeparators="None" items="{AttachmentsModel>/attachmentSet}" instantUpload="false"
+													noDataDescription="Drop files or use the '+' button for pending upload" change="onChange" fileDeleted="onFileDelete"
+													beforeUploadStarts="onBeforeUploadStarts" uploadComplete="onUploadComplete">
+													<m:items>
+														<m:UploadCollectionItem fileName="{Filename}" mimeType="{Mimetype}" url="{Url}" enableEdit="false" documentId="{Attach}" enableDelete="true"
+															visibleDelete="false" visibleEdit="false"></m:UploadCollectionItem>
+													</m:items>
+												</m:UploadCollection>
 											</m:VBox>
 										</m:VBox>
 									</blocks>
@@ -207,6 +216,7 @@
 						<m:Button text="Approve" width="100px" id="Approve" type="Accept" tooltip="Approve" press="completeCpar" visible="false"/>
 						<m:Button text="Reject" width="100px" id="Reject" type="Reject" tooltip="Reject" press="rejectCpar" visible="false"/>
 						<m:Button text="Submit" width="100px" id="Complete" type="Emphasized" press="onPressSubmit" tooltip="Complete"/>
+						<m:Button text="Upload" width="100px" id="Cdomplete" type="Emphasized" press="_checkFileUpload" tooltip="Complete"/>
 					</m:contentRight>
 				</m:Bar>
 			</m:footer>
