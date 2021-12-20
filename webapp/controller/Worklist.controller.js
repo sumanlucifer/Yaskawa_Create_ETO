@@ -166,9 +166,15 @@ sap.ui.define([
 
 		{
 			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
-			var url = `/FileAttachmentSet(Vbeln='${sSaleOrderNo}')`;
-			this.getOwnerComponent().getModel().read(url, {
-
+			var sSaleOrderFilter = new sap.ui.model.Filter({
+				path: "Input",
+				operator: sap.ui.model.FilterOperator.EQ,
+				value1: sSaleOrderNo
+			});
+			var filter = [];
+			filter.push(sSaleOrderFilter);
+			this.getOwnerComponent().getModel().read("/ETOAttachmentSet", {
+				filters: [filter],
 				success: function (oData, oResponse) {
 					this.getModel("objectViewModel").setProperty("/busy", false);
 					var s = [];

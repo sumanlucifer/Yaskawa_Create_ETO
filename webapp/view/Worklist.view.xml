@@ -171,19 +171,14 @@
 													text="To add files, you can also use drag &amp; drop on your desktop or tablet."/>
 											</m:VBox>
 											<m:VBox>
-												<!--<m:UploadCollection id="UploadCollection" maximumFilenameLength="55" maximumFileSize="10" multiple="true" sameFilenameAllowed="true"-->
-												<!--	instantUpload="false" uploadEnabled="true" uploadUrl="/sap/opu/odata/sap/ZETO_CREATE_SRV/FileAttachmentSet(Vbeln='0010562790')/$value"-->
-												<!--	noDataDescription="Drop files or use the &quot;Add&quot; button to keep files ready for upload" change="onAttachmentChange"-->
-												<!--	fileDeleted="onFileDeleted" filenameLengthExceed="onFilenameLengthExceed" fileSizeExceed="onFileSizeExceed" typeMissmatch="onTypeMissmatch"-->
-												<!--	uploadComplete="onUploadComplete" beforeUploadStarts="onBeforeUploadStarts"/>-->
 												<m:UploadCollection id="oUploadCollection" filenameLengthExceed="onFileNameLengthExceed" maximumFilenameLength="100" multiple="true"
 													showSeparators="None" items="{AttachmentsModel>/attachmentSet}" instantUpload="false"
 													noDataDescription="Drop files or use the '+' button for pending upload" change="onChange" fileDeleted="onFileDelete"
 													beforeUploadStarts="onBeforeUploadStarts" uploadComplete="onUploadComplete">
 													<m:items>
-														<m:UploadCollectionItem fileName="{Filename}" mimeType="{Mimetype}"
-															url="{parts: ['localAttachmentModel>/Filename','localAttachmentModel>/Filecontent']}" enableEdit="false" documentId="{Attach}"
-															enableDelete="true" visibleDelete="false" visibleEdit="false"></m:UploadCollectionItem>
+														<m:UploadCollectionItem fileName="{AttachmentsModel>Filename}" mimeType="{AttachmentsModel>Filetype}"
+															url="{parts: ['AttachmentsModel>Filename','AttachmentsModel>Filecontent']}" enableEdit="false" documentId="{Attach}" enableDelete="true"
+															visibleDelete="false" visibleEdit="false"></m:UploadCollectionItem>
 													</m:items>
 												</m:UploadCollection>
 											</m:VBox>
