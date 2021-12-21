@@ -134,13 +134,12 @@ sap.ui.define([
 			this.getOwnerComponent().getModel().read("/ETOHeaderDetailSet", {
 				filters: [filter],
 				success: function (oData, oResponse) {
-					this.getModel("objectViewModel").setProperty("/busy", false);
+					// 	this.getModel("objectViewModel").setProperty("/busy", false);
 					this.databuilding(oData.results[0]);
 					this.getAttachments();
 				}.bind(this),
 				error: function (oError) {
-					this.getModel("objectViewModel").setProperty("/busy", false);
-					var oMessage = JSON.parse(oError.responseText).error.message.value;
+					// 	this.getModel("objectViewModel").setProperty("/busy", false);
 
 				}.bind(this),
 			});
@@ -166,7 +165,7 @@ sap.ui.define([
 		getAttachments: function ()
 
 		{
-			this.getModel("objectViewModel").setProperty("/busy", true);
+			//	this.getModel("objectViewModel").setProperty("/busy", true);
 			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
 			var sSaleOrderFilter = new sap.ui.model.Filter({
 				path: "Input",
@@ -194,6 +193,22 @@ sap.ui.define([
 
 		onFileSizeExceed: function () {
 			MessageBox.error("File size exceeded, Please upload file with size upto 200KB.");
+		},
+		onFileDelete: function (oEvent) {
+			this.deleteItemById(oEvent.getParameter("documentId"));
+			//	MessageToast.show("FileDeleted event triggered.");
+		},
+
+		deleteItemById: function (sItemToDeleteId) {
+			var sCurrentPath = this.getCurrentFolderPath();
+			var oData = this.oModel.getProperty(sCurrentPath);
+			var aItems = oData && oData.items;
+			jQuery.each(aItems, function (index) {
+				if (aItems[index] && aItems[index].documentId === sItemToDeleteId) {
+					aItems.splice(index, 1);
+				}
+			});
+			this.oModel.setProperty(sCurrentPath + "/items", aItems);
 		},
 
 		formatAttribute: function (sValue) {
@@ -250,25 +265,91 @@ sap.ui.define([
 		onAttachmentChange: function (oEvent) {
 
 			var oFiles = oEvent.getParameters().files;
-			var iSize = oFiles[0].size;
-			// 			if (iSize > 300000) {
-			// 				this.onFileNameLengthExceed();
-			// 				return false;
-			// 			}
-
+			var Filename = oFiles[0].name;
+			var Filetype = oFiles[0].type;
+			var FileSize = oFiles[0].size;
+			var that = this;
 			this.oFiles = oFiles;
-			this._updateDocumentService(oFiles);
+			var Base64file = this.base64coonversionMethod(oFiles[0]),
+				Filecontent = Base64file;
+
+			that._updateDocumentService(Filecontent, Filename, Filetype, FileSize);
+
+			// 			this._getImageData(URL.createObjectURL(oFiles[0]), function (Filecontent) {
+			// 				that._updateDocumentService(Filecontent, Filename, Filetype, FileSize);
+			// 			});
 
 		},
 
-		_updateDocumentService: function (oFiles) {
+		// file  Bytearray conversion code
+
+		_getImageData: function (url, callback, fileName) {
+			var xhr = new XMLHttpRequest();
+			xhr.onload = function () {
+				var reader = new FileReader();
+				var fileByteArray = [];
+				reader.readAsArrayBuffer(xhr.response);
+				reader.onloadend = function (evt) {
+					if (evt.target.readyState == FileReader.DONE) {
+						var arrayBuffer = evt.target.result,
+							array = new Int8Array(arrayBuffer);
+						for (var i = 0; i < array.length; i++) {
+							fileByteArray.push(array[i]);
+						}
+						callback(fileByteArray);
+					}
+				}
+			};
+			xhr.open('GET', url);
+			xhr.responseType = 'blob';
+			xhr.send();
+		},
+
+		// file base64 conversion code
+		base64coonversionMethod: function (Filecontent) {
+
+			// 			if (!FileReader.prototype.readAsBinaryString) {
+			// 				FileReader.prototype.readAsBinaryString = function (Filecontent) {
+			// 					var binary = "";
+			// 					var reader = new FileReader();
+			// 					reader.onload = function (e) {
+			// 						var bytes = new Uint8Array(reader.result);
+			// 						var length = bytes.byteLength;
+			// 						for (var i = 0; i < length; i++) {
+			// 							binary += String.fromCharCode(bytes[i]);
+			// 						}
+			// 						that.base64ConversionRes = btoa(binary);
+
+			// 					};
+			// 					reader.readAsArrayBuffer(Filecontent);
+			// 				};
+			// 			}
+			var that = this;
+			var reader = new FileReader();
+			reader.onload = function (readerEvt) {
+				var binaryString = readerEvt.target.result;
+				that.base64ConversionRes = btoa(binaryString);
+
+			};
+			reader.readAsBinaryString(Filecontent);
+
+			return that.base64ConversionRes;
+		},
+
+		_updateDocumentService: function (Filecontent, Filename, Filetype, FileSize) {
 			this.getModel("objectViewModel").setProperty("/busy", true);
-			var file = this.oFiles;
+			//	var file = this.oFiles;
+			var payload = {
+				FileSize: FileSize,
+				Filecontent: Filecontent,
+				Filename: Filename,
+				Filetype: Filetype
+			};
 
-			var sPath = "/ETOAttachmentSet";
-			this.getOwnerComponent().getModel().update(sPath, file[0], {
+			this.getOwnerComponent().getModel().create("/ETOAttachmentSet", payload, {
 				success: function (oData, oResponse) {
-
+					this.getModel("objectViewModel").setProperty("/busy", false);
+					sap.m.MessageBox.success("Upload Successfull!");
 					this.getView().getModel().refresh();
 
 				}.bind(this),
