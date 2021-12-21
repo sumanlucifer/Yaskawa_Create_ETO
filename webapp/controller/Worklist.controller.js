@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/UploadCollectionParameter",
-	"sap/m/MessageBox"
-], function (BaseController, JSONModel, formatter, Filter, FilterOperator, UploadCollectionParameter, MessageBox) {
+	"sap/m/MessageBox",
+	"sap/ui/core/format/FileSizeFormat"
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, UploadCollectionParameter, MessageBox, FileSizeFormat) {
 	"use strict";
 
 	return BaseController.extend("com.yaskawa.ETOWorkFlow.controller.Worklist", {
@@ -43,7 +44,6 @@ sap.ui.define([
 				distributionChannelDD: [],
 				distributionChannelKey: "",
 				orderTypeSetDD: [],
-
 				typoofApplicationDD: [],
 				typoofApplicationKey: "",
 				typoofOrderDD: [],
@@ -189,8 +189,25 @@ sap.ui.define([
 			});
 		},
 		onFileNameLengthExceed: function () {
-			MessageBox.error("File name length exceeded, Please upload file with name lenght upto 100 characters.");
+			MessageBox.error("File name length exceeded, Please upload file with name lenght upto 50 characters.");
 		},
+
+		onFileSizeExceed: function () {
+			MessageBox.error("File size exceeded, Please upload file with size upto 200KB.");
+		},
+
+		formatAttribute: function (sValue) {
+			if (jQuery.isNumeric(sValue)) {
+				return FileSizeFormat.getInstance({
+					binaryFilesize: false,
+					maxFractionDigits: 1,
+					maxIntegerDigits: 3
+				}).format(sValue);
+			} else {
+				return sValue;
+			}
+		},
+
 		onPressSubmit: function () {
 			this.getModel("objectViewModel").setProperty("/busy", true);
 			var oSalesData = this.getModel("HeaderDetailsModel").getData();
@@ -233,6 +250,12 @@ sap.ui.define([
 		onAttachmentChange: function (oEvent) {
 
 			var oFiles = oEvent.getParameters().files;
+			var iSize = oFiles[0].size;
+			// 			if (iSize > 300000) {
+			// 				this.onFileNameLengthExceed();
+			// 				return false;
+			// 			}
+
 			this.oFiles = oFiles;
 			this._updateDocumentService(oFiles);
 
@@ -276,16 +299,6 @@ sap.ui.define([
 			oTable.getBinding("items").refresh();
 		},
 
-		/* =========================================================== */
-		/* internal methods                                            */
-		/* =========================================================== */
-
-		/**
-		 * Shows the selected item on the object page
-		 * On phones a additional history entry is created
-		 * @param {sap.m.ObjectListItem} oItem selected Item
-		 * @private
-		 */
 		_showObject: function (oItem) {
 			this.getRouter().navTo("object", {
 				objectId: oItem.getBindingContext().getProperty("PONumber")
