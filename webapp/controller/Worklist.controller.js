@@ -148,6 +148,7 @@ sap.ui.define([
 
 		databuilding: function (data) {
 			this.getModel("HeaderDetailsModel").setProperty("/OrderDate", data.OrderDate);
+			this.getModel("HeaderDetailsModel").setProperty("/ReqestedBy", data.ReqestedBy);
 			this.getModel("HeaderDetailsModel").setProperty("/ShipDate", data.ShipDate);
 			this.getModel("HeaderDetailsModel").setProperty("/CustReprsntv", data.CustReprsntv);
 			this.getModel("HeaderDetailsModel").setProperty("/CustName", data.CustName);
@@ -165,6 +166,7 @@ sap.ui.define([
 		getAttachments: function ()
 
 		{
+			this.getModel("objectViewModel").setProperty("/busy", true);
 			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
 			var sSaleOrderFilter = new sap.ui.model.Filter({
 				path: "Input",
@@ -177,11 +179,8 @@ sap.ui.define([
 				filters: [filter],
 				success: function (oData, oResponse) {
 					this.getModel("objectViewModel").setProperty("/busy", false);
-					var s = [];
-					s.push(oData);
-
-					this.getModel("AttachmentsModel").setProperty("/attachmentSet", s);
-
+					this.getModel("AttachmentsModel").setProperty("/attachmentSet", oData.results);
+					this.getModel("objectViewModel").setProperty("/busy", false);
 				}.bind(this),
 				error: function (oError) {
 					this.getModel("objectViewModel").setProperty("/busy", false);
@@ -243,7 +242,7 @@ sap.ui.define([
 			this.getModel("objectViewModel").setProperty("/busy", true);
 			var file = this.oFiles;
 
-			var sPath = "/FileAttachmentSet(Vbeln='0000454481')";
+			var sPath = "/ETOAttachmentSet";
 			this.getOwnerComponent().getModel().update(sPath, file[0], {
 				success: function (oData, oResponse) {
 

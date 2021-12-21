@@ -173,12 +173,11 @@
 											<m:VBox>
 												<m:UploadCollection id="oUploadCollection" filenameLengthExceed="onFileNameLengthExceed" maximumFilenameLength="100" multiple="true"
 													showSeparators="None" items="{AttachmentsModel>/attachmentSet}" instantUpload="false"
-													noDataDescription="Drop files or use the '+' button for pending upload" change="onChange" fileDeleted="onFileDelete"
+													noDataDescription="Drop files or use the '+' button for pending upload" change="onAttachmentChange" fileDeleted="onFileDelete"
 													beforeUploadStarts="onBeforeUploadStarts" uploadComplete="onUploadComplete">
 													<m:items>
-														<m:UploadCollectionItem fileName="{AttachmentsModel>Filename}" mimeType="{AttachmentsModel>Filetype}"
-															url="{parts: ['AttachmentsModel>Filename','AttachmentsModel>Filecontent']}" enableEdit="false" documentId="{Attach}" enableDelete="true"
-															visibleDelete="false" visibleEdit="false"></m:UploadCollectionItem>
+														<m:UploadCollectionItem fileName="{AttachmentsModel>Filename}" mimeType="{AttachmentsModel>Filetype}" url="{AttachmentsModel>Url}"
+															enableEdit="false" documentId="{Attach}" enableDelete="true" visibleDelete="false" visibleEdit="false"></m:UploadCollectionItem>
 													</m:items>
 												</m:UploadCollection>
 											</m:VBox>
