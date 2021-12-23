@@ -100,20 +100,6 @@
 					"target": [
 						"worklist"
 					]
-				},
-				{
-					"pattern": "object/{objectId}",
-					"name": "object",
-					"target": [
-						"object"
-					]
-				},
-				{
-					"pattern": "itemView",
-					"name": "itemView",
-					"target": [
-						"itemView"
-					]
 				}
 			],
 			"targets": {
@@ -122,18 +108,6 @@
 					"viewId": "worklist",
 					"viewLevel": 1,
 					"title": "{i18n>worklistViewTitle}"
-				},
-				"object": {
-					"viewName": "Object",
-					"viewId": "object",
-					"viewLevel": 2,
-					"title": "{i18n>objectViewTitle}"
-				},
-				"itemView": {
-					"viewName": "ItemDetails",
-					"viewId": "ItemDetails",
-					"viewLevel": 3,
-					"title": "Item Details"
 				},
 				"objectNotFound": {
 					"viewName": "ObjectNotFound",
