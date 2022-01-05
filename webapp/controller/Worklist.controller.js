@@ -338,12 +338,17 @@ sap.ui.define([
 
 		_updateDocumentService: function (Filecontent, Filename, Filetype, FileSize) {
 			this.getModel("objectViewModel").setProperty("/busy", true);
-			//	var file = this.oFiles;
+			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
 			var payload = {
-				FileSize: FileSize,
-				Filecontent: Filecontent,
+				Vbeln: sSaleOrderNo,
+				SerialNo: "",
 				Filename: Filename,
-				Filetype: Filetype
+				Filecontent: Filecontent,
+				Filetype: Filetype,
+				Sydate: "",
+				Time: "",
+				Zuser: ""
+
 			};
 
 			this.getOwnerComponent().getModel().create("/ETOAttachmentSet", payload, {
