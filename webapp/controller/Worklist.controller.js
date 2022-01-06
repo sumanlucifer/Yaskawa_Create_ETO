@@ -164,7 +164,7 @@ sap.ui.define([
 			var file = domRef.files[0];
 			var Base64file = this.base64coonversionMethod(file),
 				Filecontent = Base64file,
-				Input = "1234",
+				Input = "458076",
 				Filename = file.name,
 				Filetype = file.type;
 
