@@ -171,10 +171,15 @@
 													text="To add files, you can also use drag &amp; drop on your desktop or tablet."/>
 											</m:VBox>
 											<m:VBox>
+												<m:HBox>
+													<u:FileUploader id="__FILEUPLOAD" visible="true" sameFilenameAllowed="false" buttonText="" fileType="XLS,CSV,PDF,PNG,DOCX,JPG"
+														change="onComplete" typeMissmatch="handleMissmatch" placeholder="Choose a file" style="Emphasized"/>
+													<m:Button class="sapUiMediumMarginBegin" text="Upload" width="100px" type="Accept" tooltip="Upload" press="onUploadPress"/>
+												</m:HBox>
 												<m:UploadCollection id="oUploadCollection" fileSizeExceed="onFileSizeExceed" filenameLengthExceed="onFileNameLengthExceed"
 													maximumFilenameLength="50" maximumFileSize="2" multiple="true" showSeparators="None" items="{AttachmentsModel>/attachmentSet}" mode="None"
-													uploadButtonInvisible="false" instantUpload="false" noDataDescription="Drop files or use the '+' button for pending upload"
-													change="onAttachmentChange" fileDeleted="onFileDelete" beforeUploadStarts="onBeforeUploadStarts" uploadComplete="onUploadComplete">
+													uploadButtonInvisible="true" instantUpload="false" noDataDescription="Drop files or use the '+' button for pending upload" change="ss"
+													fileDeleted="onFileDelete" beforeUploadStarts="onBeforeUploadStarts" uploadComplete="onUploadComplete">
 													<m:items>
 														<m:UploadCollectionItem fileName="{AttachmentsModel>Filename}" mimeType="{AttachmentsModel>Filetype}" url="{AttachmentsModel>Url}"
 															enableEdit="false" documentId="{Attach}" enableDelete="true" visibleDelete="false" visibleEdit="false">

@@ -14,20 +14,14 @@ sap.ui.define([
 
 		formatter: formatter,
 
-		/* =========================================================== */
-		/* lifecycle methods                                           */
-		/* =========================================================== */
-
-		/**
-		 * Called when the worklist controller is instantiated.
-		 * @public
-		 */
 		onInit: function () {
 
 			this.createInitialModel();
 			this._createHeaderDetailsModel();
 			this.callDropDownService();
 			this._createAttachmentsModel();
+			var oUploadCollection = this.getView().byId('oUploadCollection');
+			oUploadCollection.setUploadUrl("/sap/opu/odata/sap/ETOAttachmentSet");
 
 		},
 
@@ -139,7 +133,7 @@ sap.ui.define([
 					this.getAttachments();
 				}.bind(this),
 				error: function (oError) {
-					// 	this.getModel("objectViewModel").setProperty("/busy", false);
+					this.getModel("objectViewModel").setProperty("/busy", false);
 
 				}.bind(this),
 			});
@@ -162,6 +156,62 @@ sap.ui.define([
 			this.getModel("HeaderDetailsModel").setProperty("/orderStatusSetKey", data.OrderStatus);
 
 		},
+		onUploadPress: function (oEvent) {
+
+			var oFileUploader = this.byId("__FILEUPLOAD");
+			oFileUploader.removeAllHeaderParameters();
+			var domRef = oFileUploader.getFocusDomRef();
+			var file = domRef.files[0];
+			var Base64file = this.base64coonversionMethod(file),
+				Filecontent = Base64file,
+				Input = "1234",
+				Filename = file.name,
+				Filetype = file.type;
+
+			oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
+				name: "slug",
+				value: Filecontent + "|" + Input + "|" + Filename + "|" + Filetype
+
+			}));
+			oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
+				name: "x-csrf-token",
+				value: this.getModel().getSecurityToken()
+			}));
+			var sUrl = this.getModel().sServiceUrl + "/ETOAttachmentSet";
+			oFileUploader.setUploadUrl(sUrl);
+			oFileUploader.setSendXHR(true);
+			oFileUploader.setUseMultipart(false);
+			oFileUploader.upload();
+
+		},
+
+		onUploadComplete: function (oEvent) {
+			if (oEvent.getParameter("status") === 201) {
+				MessageBox.show(this.getResourceBundle().getText("uploadMsg"), {
+						icon: sap.m.MessageBox.Icon.INFORMATION,
+						title: this.getResourceBundle().getText("msgTitle"),
+						onClose: function (oAction) {
+
+						}
+					})
+					//   this.getView().getElementBinding().refresh(true);
+				this.getView().getModel().refresh(true);
+
+			} else {
+				MessageBox.show(oEvent.mParameters.response.split("/")[1], {
+					icon: MessageBox.Icon.ERROR,
+					title: this.getResourceBundle().getText("msgTitle"),
+					onClose: function (oAction) {
+
+					}.bind(this),
+					actions: [MessageBox.Action.CLOSE]
+				});
+
+			}
+			sap.ui.getCore().byId("fileUploader").setValue("");
+			this._oFileUploadDialog.close();
+		},
+
 		getAttachments: function ()
 
 		{
@@ -262,7 +312,7 @@ sap.ui.define([
 			});
 		},
 
-		onAttachmentChange: function (oEvent) {
+		onAttachmentChange1: function (oEvent) {
 
 			var oFiles = oEvent.getParameters().files;
 			var Filename = oFiles[0].name;
@@ -280,7 +330,19 @@ sap.ui.define([
 			// 			});
 
 		},
+		onAttachmentChange: function (oEvent) {
 
+			var oFileUploader = oEvent.getSource();
+
+			oFileUploader.removeAllHeaderParameters();
+			var oModel = this.getView().getModel();
+			var oToken = oModel.getSecurityToken();
+			oFileUploader.addHeaderParameter(new sap.m.UploadCollectionParameter({
+				name: "x-csrf-token",
+				value: oToken
+			}));
+
+		},
 		// file  Bytearray conversion code
 
 		_getImageData: function (url, callback, fileName) {
@@ -340,8 +402,7 @@ sap.ui.define([
 			this.getModel("objectViewModel").setProperty("/busy", true);
 			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
 			var payload = {
-				Vbeln: sSaleOrderNo,
-				SerialNo: "",
+				SalesOrdEqui: sSaleOrderNo,
 				Filename: Filename,
 				Filecontent: Filecontent,
 				Filetype: Filetype,

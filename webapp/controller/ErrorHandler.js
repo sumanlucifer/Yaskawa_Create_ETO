@@ -47,7 +47,9 @@ sap.ui.define([
 			if (this._bMessageOpen) {
 				return;
 			}
-			sDetails = JSON.parse(sDetails.responseText).error.message.value;
+			sDetails = sDetails.statusCode === 500 ? sDetails.message : JSON.parse(sDetails.responseText).error.message.value;
+
+			//	sDetails = JSON.parse(sDetails.responseText).error.message.value;
 
 			this._bMessageOpen = true;
 			MessageBox.error(
