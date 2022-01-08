@@ -14,7 +14,8 @@
 							<m:HBox class="sapUiSmallMarginBegin" width="100%">
 								<m:Label text="{i18n>salesOrder}" width="100px" textAlign="Left" required="true" design="Bold" class="sapUiTinyMarginEnd"/>
 								<m:Input id="idSaleOrderInput" value="{HeaderDetailsModel>/Vbeln}"></m:Input>
-								<m:Button press="onSearchSaleOrder" id="btnSaleOrder" text="GO"></m:Button>
+								<m:Button class="sapUiSmallMarginBegin" press="onSearchSaleOrder" id="btnSaleOrder" text="GO"></m:Button>
+								<m:Button class="sapUiSmallMarginBegin" press="onResetSaleOrder" id="btnResetSaleOrdr" text="Reset"></m:Button>
 							</m:HBox>
 							<m:HBox class="sapUiSmallMarginBegin sapUiSmallMarginTop" width="100%">
 								<m:Label text="Request Status" width="100px" textAlign="Left" design="Bold" class="sapUiTinyMarginEnd"/>
@@ -168,13 +169,12 @@
 										<m:VBox>
 											<m:VBox class="sapUiTinyMargin" renderType="Bare">
 												<m:MessageStrip class="sapUiTinyMarginBottom" visible="{=!${device>/browser/mobile}}" showIcon="true" type="Information"
-													text="To add files, you can also use drag &amp; drop on your desktop or tablet."/>
+													text="To add files, you can click on browse button below."/>
 											</m:VBox>
 											<m:VBox>
 												<m:HBox>
 													<u:FileUploader id="__FILEUPLOAD" visible="true" sameFilenameAllowed="false" buttonText="" fileType="XLS,CSV,PDF,PNG,DOCX,JPG"
-														change="onComplete" typeMissmatch="handleMissmatch" placeholder="Choose a file" style="Emphasized"/>
-													<m:Button class="sapUiMediumMarginBegin" text="Upload" width="100px" type="Accept" tooltip="Upload" press="onUploadPress"/>
+														change="onUploadPress" uploadComplete="onComplete" typeMissmatch="handleMissmatch" placeholder="Choose a file" style="Emphasized"/>
 												</m:HBox>
 												<m:UploadCollection id="oUploadCollection" fileSizeExceed="onFileSizeExceed" filenameLengthExceed="onFileNameLengthExceed"
 													maximumFilenameLength="50" maximumFileSize="2" multiple="true" showSeparators="None" items="{AttachmentsModel>/attachmentSet}" mode="None"

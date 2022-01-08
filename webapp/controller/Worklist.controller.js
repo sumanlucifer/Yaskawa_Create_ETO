@@ -115,9 +115,16 @@ sap.ui.define([
 		},
 
 		onSearchSaleOrder: function () {
-			this.getModel("objectViewModel").setProperty("/busy", true);
+
 			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
 
+			if (sSaleOrderNo === "") {
+				sap.m.MessageBox.error("Please Enter Sales Order Number");
+
+				return false;
+			}
+			this.getView().byId("idSaleOrderInput").setEnabled(false);
+			this.getModel("objectViewModel").setProperty("/busy", true);
 			var sSaleOrderNoFilter = new sap.ui.model.Filter({
 				path: "Vbeln",
 				operator: sap.ui.model.FilterOperator.EQ,
@@ -139,6 +146,12 @@ sap.ui.define([
 			});
 		},
 
+		onResetSaleOrder: function () {
+
+			this.getView().byId("idSaleOrderInput").setValue("");
+			this.getView().byId("idSaleOrderInput").setEnabled(true);
+		},
+
 		databuilding: function (data) {
 			this.getModel("HeaderDetailsModel").setProperty("/OrderDate", data.OrderDate);
 			this.getModel("HeaderDetailsModel").setProperty("/ReqestedBy", data.ReqestedBy);
@@ -158,19 +171,30 @@ sap.ui.define([
 		},
 		onUploadPress: function (oEvent) {
 
+			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
+			if (sSaleOrderNo === "") {
+				sap.m.MessageBox.error("Please Enter Sales Order Number!");
+				this.byId("__FILEUPLOAD").setValue("");
+				return;
+			}
+			this.getModel("objectViewModel").setProperty("/busy", true);
 			var oFileUploader = this.byId("__FILEUPLOAD");
 			oFileUploader.removeAllHeaderParameters();
 			var domRef = oFileUploader.getFocusDomRef();
 			var file = domRef.files[0];
 			var Base64file = this.base64coonversionMethod(file),
 				Filecontent = Base64file,
-				Input = "458076",
+				//Input = "458076",
+				Input = sSaleOrderNo,
 				Filename = file.name,
-				Filetype = file.type;
+				//Filetype = file.type,
+
+				Filetype = file.type === "application/pdf" ? "application/pdf" : "application/octet-stream",
+				Filesize = file.size;
 
 			oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
 				name: "slug",
-				value: Filecontent + "|" + Input + "|" + Filename + "|" + Filetype
+				value: Filecontent + "|" + Input + "|" + Filename + "|" + Filetype + "|" + Filesize
 
 			}));
 			oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
@@ -185,31 +209,22 @@ sap.ui.define([
 
 		},
 
-		onUploadComplete: function (oEvent) {
-			if (oEvent.getParameter("status") === 201) {
-				MessageBox.show(this.getResourceBundle().getText("uploadMsg"), {
-						icon: sap.m.MessageBox.Icon.INFORMATION,
-						title: this.getResourceBundle().getText("msgTitle"),
-						onClose: function (oAction) {
+		onComplete: function (oEvent) {
+			if (oEvent.getParameter("status") === 500) {
+				this.getModel("objectViewModel").setProperty("/busy", false);
+				sap.m.MessageBox.success("The File has been uploaded successfully!");
 
-						}
-					})
-					//   this.getView().getElementBinding().refresh(true);
+				this.onSearchSaleOrder();
+				this.byId("__FILEUPLOAD").setValue("");
+				//   this.getView().getElementBinding().refresh(true);
 				this.getView().getModel().refresh(true);
 
 			} else {
-				MessageBox.show(oEvent.mParameters.response.split("/")[1], {
-					icon: MessageBox.Icon.ERROR,
-					title: this.getResourceBundle().getText("msgTitle"),
-					onClose: function (oAction) {
-
-					}.bind(this),
-					actions: [MessageBox.Action.CLOSE]
-				});
-
+				this.getModel("objectViewModel").setProperty("/busy", false);
+				sap.m.MessageBox.error("The File  upload failed!");
+				this.byId("__FILEUPLOAD").setValue("");
 			}
-			sap.ui.getCore().byId("fileUploader").setValue("");
-			this._oFileUploadDialog.close();
+
 		},
 
 		getAttachments: function ()
@@ -274,6 +289,12 @@ sap.ui.define([
 		},
 
 		onPressSubmit: function () {
+			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
+			if (sSaleOrderNo === "") {
+				sap.m.MessageBox.error("Please Enter Sales Order Number and press Go!");
+
+				return;
+			}
 			this.getModel("objectViewModel").setProperty("/busy", true);
 			var oSalesData = this.getModel("HeaderDetailsModel").getData();
 			var oPayload = {
