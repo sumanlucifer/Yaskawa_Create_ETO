@@ -174,7 +174,8 @@
 											<m:VBox>
 												<m:HBox>
 													<u:FileUploader id="__FILEUPLOAD" visible="true" sameFilenameAllowed="false" buttonText="" fileType="XLS,CSV,PDF,PNG,DOCX,JPG"
-														change="onUploadPress" uploadComplete="onComplete" typeMissmatch="handleMissmatch" placeholder="Choose a file" style="Emphasized"/>
+														change="onUploadPress" filenameLengthExceed="onFileNameLengthExceed" fileSizeExceed="onFileSizeExceed" maximumFileSize="2"
+														uploadComplete="onComplete" typeMissmatch="handleMissmatch" placeholder="Choose a file" style="Emphasized"/>
 												</m:HBox>
 												<m:UploadCollection id="oUploadCollection" fileSizeExceed="onFileSizeExceed" filenameLengthExceed="onFileNameLengthExceed"
 													maximumFilenameLength="50" maximumFileSize="2" multiple="true" showSeparators="None" items="{AttachmentsModel>/attachmentSet}" mode="None"

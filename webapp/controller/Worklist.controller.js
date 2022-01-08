@@ -189,7 +189,7 @@ sap.ui.define([
 				Filename = file.name,
 				//Filetype = file.type,
 
-				Filetype = file.type === "application/pdf" ? "application/pdf" : "application/octet-stream",
+				Filetype = file.type === "application/pdf" ? "pdf" : "application/octet-stream",
 				Filesize = file.size;
 
 			oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
@@ -210,14 +210,15 @@ sap.ui.define([
 		},
 
 		onComplete: function (oEvent) {
+			this.MainModel = this.getComponentModel();
 			if (oEvent.getParameter("status") === 500) {
 				this.getModel("objectViewModel").setProperty("/busy", false);
 				sap.m.MessageBox.success("The File has been uploaded successfully!");
-
+				this.getView().getModel().refresh();
 				this.onSearchSaleOrder();
 				this.byId("__FILEUPLOAD").setValue("");
-				//   this.getView().getElementBinding().refresh(true);
-				this.getView().getModel().refresh(true);
+				this.MainModel.refresh();
+				this.getModel().refresh();
 
 			} else {
 				this.getModel("objectViewModel").setProperty("/busy", false);
