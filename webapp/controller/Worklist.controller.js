@@ -20,8 +20,6 @@ sap.ui.define([
 			this._createHeaderDetailsModel();
 			this.callDropDownService();
 			this._createAttachmentsModel();
-			var oUploadCollection = this.getView().byId('oUploadCollection');
-			oUploadCollection.setUploadUrl("/sap/opu/odata/sap/ETOAttachmentSet");
 
 		},
 
