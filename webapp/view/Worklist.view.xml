@@ -135,7 +135,8 @@
 												<m:VBox class="sapUiSmallMarginBegin" width="100%">
 													<m:Label design="Bold" text="Types Of Applications" required="true"/>
 													<m:VBox width="100%">
-														<m:ComboBox width="100%" selectedKey="{HeaderDetailsModel>/typoofApplicationKey}" items="{HeaderDetailsModel>/typoofApplicationDD}">
+														<m:ComboBox id="idTypeOfApp" width="100%" selectedKey="{HeaderDetailsModel>/typoofApplicationKey}"
+															items="{HeaderDetailsModel>/typoofApplicationDD}">
 															<core:Item key="{HeaderDetailsModel>DomValue}" text="{HeaderDetailsModel>Ddtext}"/>
 														</m:ComboBox>
 													</m:VBox>
@@ -143,7 +144,7 @@
 												<m:VBox class="sapUiSmallMarginBegin" width="100%">
 													<m:Label design="Bold" text="Type Of Order" required="true"/>
 													<m:VBox width="100%">
-														<m:ComboBox width="100%" selectedKey="{HeaderDetailsModel>/typoofOrderKey}" items="{HeaderDetailsModel>/typoofOrderDD}">
+														<m:ComboBox id="idTypeOfOrder" width="100%" selectedKey="{HeaderDetailsModel>/typoofOrderKey}" items="{HeaderDetailsModel>/typoofOrderDD}">
 															<core:Item key="{HeaderDetailsModel>DomValue}" text="{HeaderDetailsModel>Ddtext}"/>
 														</m:ComboBox>
 													</m:VBox>
@@ -152,8 +153,8 @@
 													<m:Label design="Bold" text="Check List" required="true"/>
 													<m:VBox>
 														<m:CheckBox text="Customer P.O. Scanned and Attached" selected="true"/>
-														<m:CheckBox text="Prel. Order Confirmation Sent and Attached"/>
-														<m:CheckBox text="Sales Order Confirmation"/>
+														<m:CheckBox text="Prel. Order Confirmation Sent and Attached" selected="true"/>
+														<m:CheckBox text="Sales Order Confirmation" selected="true"/>
 													</m:VBox>
 												</m:VBox>
 											</l:Grid>

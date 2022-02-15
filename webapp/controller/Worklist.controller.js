@@ -121,6 +121,7 @@ sap.ui.define([
 
 				return false;
 			}
+
 			this.getView().byId("idSaleOrderInput").setEnabled(false);
 			this.getModel("objectViewModel").setProperty("/busy", true);
 			var sSaleOrderNoFilter = new sap.ui.model.Filter({
@@ -148,6 +149,8 @@ sap.ui.define([
 
 			this.getView().byId("idSaleOrderInput").setValue("");
 			this.getView().byId("idSaleOrderInput").setEnabled(true);
+			this.onInit();
+
 		},
 
 		databuilding: function (data) {
@@ -197,7 +200,7 @@ sap.ui.define([
 
 		onComplete: function (oEvent) {
 			this.MainModel = this.getComponentModel();
-			if (oEvent.getParameter("status") === 500) {
+			if (oEvent.getParameter("status") === 500 || oEvent.getParameter("status") === 201) {
 				this.getModel("objectViewModel").setProperty("/busy", false);
 				sap.m.MessageBox.success("The File has been uploaded successfully!");
 				this.getView().getModel().refresh();
@@ -279,6 +282,19 @@ sap.ui.define([
 			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
 			if (sSaleOrderNo === "") {
 				sap.m.MessageBox.error("Please Enter Sales Order Number and press Go!");
+
+				return;
+			}
+			var sTypeofOrder = this.getView().byId("idTypeOfOrder").getSelectedKey();
+			var sTypeofApplication = this.getView().byId("idTypeOfApp").getSelectedKey();
+
+			if (sTypeofOrder === "") {
+				sap.m.MessageBox.error("Please Select Type of Order");
+
+				return;
+			}
+			if (sTypeofApplication === "") {
+				sap.m.MessageBox.error("Please Select Type of Application");
 
 				return;
 			}
