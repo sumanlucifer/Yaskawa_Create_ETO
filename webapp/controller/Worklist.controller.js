@@ -167,6 +167,7 @@ sap.ui.define([
 			this.getModel("HeaderDetailsModel").setProperty("/NoSalesOrder", data.NoSalesOrder);
 			this.getModel("HeaderDetailsModel").setProperty("/CustPo", data.CustPo);
 			this.getModel("HeaderDetailsModel").setProperty("/distributionChannelKey", data.Vtweg);
+			this.getModel("HeaderDetailsModel").setProperty("/QuotationNo", data.QuotationNo);
 			this.getModel("HeaderDetailsModel").setProperty("/orderStatusSetKey", data.OrderStatus);
 
 		},
