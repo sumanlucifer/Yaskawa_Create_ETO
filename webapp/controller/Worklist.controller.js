@@ -427,7 +427,7 @@ sap.ui.define([
 			var sUrl = this.getModel().sServiceUrl + "/ETOAttachmentSet";
 			oFileUploader.setUploadUrl(sUrl);
 			oFileUploader.setSendXHR(true);
-			oFileUploader.setUseMultipart(false);
+			oFileUploader.setUseMultipart(true);
 			oFileUploader.upload();
 		},
 
