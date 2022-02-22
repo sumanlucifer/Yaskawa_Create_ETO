@@ -162,8 +162,8 @@ sap.ui.define([
 			this.getModel("HeaderDetailsModel").setProperty("/CustNumber", data.CustNumber);
 			this.getModel("HeaderDetailsModel").setProperty("/OrderStatus", data.OrderStatus);
 			this.getModel("HeaderDetailsModel").setProperty("/TotalNetValue", data.TotalNetValue);
-			this.getModel("HeaderDetailsModel").setProperty("/TypeApp", data.TypeApp);
-			this.getModel("HeaderDetailsModel").setProperty("/TypeOrder", data.TypeOrder);
+			this.getModel("HeaderDetailsModel").setProperty("/typoofApplicationKey", data.TypeApp);
+			this.getModel("HeaderDetailsModel").setProperty("/typoofOrderKey", data.TypeOrder);
 			this.getModel("HeaderDetailsModel").setProperty("/NoSalesOrder", data.NoSalesOrder);
 			this.getModel("HeaderDetailsModel").setProperty("/CustPo", data.CustPo);
 			this.getModel("HeaderDetailsModel").setProperty("/distributionChannelKey", data.Vtweg);
