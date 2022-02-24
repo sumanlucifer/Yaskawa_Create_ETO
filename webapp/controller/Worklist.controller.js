@@ -4,10 +4,9 @@ sap.ui.define([
 	"../model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/UploadCollectionParameter",
 	"sap/m/MessageBox",
 	"sap/ui/core/format/FileSizeFormat"
-], function (BaseController, JSONModel, formatter, Filter, FilterOperator, UploadCollectionParameter, MessageBox, FileSizeFormat) {
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, MessageBox, FileSizeFormat) {
 	"use strict";
 
 	return BaseController.extend("com.yaskawa.ETOWorkFlow.controller.Worklist", {
