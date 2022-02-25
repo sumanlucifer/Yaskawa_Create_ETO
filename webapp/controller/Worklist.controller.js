@@ -249,21 +249,48 @@ sap.ui.define([
 		onFileSizeExceed: function () {
 			MessageBox.error("File size exceeded, Please upload file with size upto 200KB.");
 		},
-		onFileDelete: function (oEvent) {
-			this.deleteItemById(oEvent.getParameter("documentId"));
-			//	MessageToast.show("FileDeleted event triggered.");
-		},
+		onPressDeleteAttchmnt: function (oEvent) {
+			var object = oEvent.getSource().getBindingContext("AttachmentsModel").getObject();
+			sap.m.MessageBox.warning("Are you sure to delete this attachment?", {
+				actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+				styleClass: "messageBoxError",
+				onClose: function (oAction) {
+					if (oAction === sap.m.MessageBox.Action.YES) {
+						this.deleteServiceCall(object);
 
-		deleteItemById: function (sItemToDeleteId) {
-			var sCurrentPath = this.getCurrentFolderPath();
-			var oData = this.oModel.getProperty(sCurrentPath);
-			var aItems = oData && oData.items;
-			jQuery.each(aItems, function (index) {
-				if (aItems[index] && aItems[index].documentId === sItemToDeleteId) {
-					aItems.splice(index, 1);
-				}
+					}
+
+				}.bind(this),
 			});
-			this.oModel.setProperty(sCurrentPath + "/items", aItems);
+		},
+		deleteServiceCall: function (object) {
+			this.getModel("objectViewModel").setProperty("/busy", true);
+			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
+
+			var oPayload = {
+
+				"SONumber": sSaleOrderNo,
+				"Item": object.ItemNr,
+				"Index": object.Index,
+				"Message": ""
+
+			};
+			this.getOwnerComponent().getModel().create("/DeleteAttachmentSet", oPayload, {
+
+				success: function (oData, oResponse) {
+
+					this.getModel("objectViewModel").setProperty("/busy", false);
+					this.onSearchSaleOrder();
+
+					sap.m.MessageBox.success(oData.Message);
+				}.bind(this),
+				error: function (oError) {
+
+					this.getModel("objectViewModel").setProperty("/busy", false);
+					sap.m.MessageBox.error("HTTP Request Failed");
+
+				}.bind(this),
+			});
 		},
 
 		formatAttribute: function (sValue) {
