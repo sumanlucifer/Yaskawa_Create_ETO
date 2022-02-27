@@ -227,8 +227,13 @@ sap.ui.define([
 				operator: sap.ui.model.FilterOperator.EQ,
 				value1: sSaleOrderNo
 			});
+			var sItemNoFilter = new sap.ui.model.Filter({
+				path: "ItemNr",
+				operator: sap.ui.model.FilterOperator.EQ,
+				value1: "000000"
+			});
 			var filter = [];
-			filter.push(sSaleOrderFilter);
+			filter.push(sSaleOrderFilter, sItemNoFilter);
 			this.getOwnerComponent().getModel().read("/ETOAttachmentSet", {
 				filters: [filter],
 				success: function (oData, oResponse) {
