@@ -488,11 +488,6 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Internal helper method to apply both filter and search state together on the list binding
-		 * @param {sap.ui.model.Filter[]} aTableSearchState An array of filters for the search
-		 * @private
-		 */
 		_applySearch: function (aTableSearchState) {
 			var oTable = this.byId("table"),
 				oViewModel = this.getModel("worklistView");
@@ -515,25 +510,14 @@ sap.ui.define([
 				navCon.back();
 			}
 		},
-		onCparDisplay: function () {
-			this.handleNav("LIST");
-		},
+
 		onBack: function () {
 			this.handleNav("Tiles");
 		},
 		onBackList: function () {
 			this.handleNav("Tiles");
 		},
-		onTypeofOredrSelect: function (oEvent) {
-			var oView = this.getView();
-			if (oEvent.getSource().getSelected()) {
-				oView.byId("Approve").setVisible(true);
-				oView.byId("Reject").setVisible(true);
-			} else {
-				oView.byId("Approve").setVisible(false);
-				oView.byId("Reject").setVisible(false);
-			}
-		},
+
 		itemTableSelectionChange: function (oEvent) {
 			var selectedRowIndex = oEvent.getSource().getSelectedContextPaths()[0].split("/")[2];
 			// var oItem = oEvent.getSource();
@@ -542,42 +526,6 @@ sap.ui.define([
 			this.getRouter().navTo("object", {
 				objectId: selItemNumber
 			});
-		},
-		_getReassignSectionDialog: function () {
-			var _self = this;
-			if (!_self._oDialogReassignSection) {
-				_self._oDialogReassignSection = sap.ui.xmlfragment("com.yaskawa.ETOWorkFlow.fragments.ReassignSection",
-					_self);
-				_self.getView().addDependent(_self._oDialogReassignSection);
-			}
-			return this._oDialogReassignSection;
-		},
-		onReassignButtonPress: function () {
-			this._getReassignSectionDialog().open();
-		},
-		onAttachmentOk: function () {
-			this._getReassignSectionDialog().close();
-		},
-		onAttachmentCancel: function () {
-			this._getReassignSectionDialog().close();
-		},
-		_getDownloadOptionSelectDialog: function () {
-			var _self = this;
-			if (!_self._oDownloadOptionSelect) {
-				_self._oDownloadOptionSelect = sap.ui.xmlfragment("com.yaskawa.ETOWorkFlow.fragments.DownloadOptionSelect",
-					_self);
-				_self.getView().addDependent(_self._oDownloadOptionSelect);
-			}
-			return this._oDownloadOptionSelect;
-		},
-		onDataExport: function () {
-			this._getDownloadOptionSelectDialog().open();
-		},
-		onDownloadExcelSelected: function () {
-			this._getDownloadOptionSelectDialog().close();
-		},
-		onDownloadWinshuttleSelected: function () {
-			this._getDownloadOptionSelectDialog().close();
 		}
 
 	});
