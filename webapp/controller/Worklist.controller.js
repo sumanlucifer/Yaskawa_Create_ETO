@@ -128,8 +128,13 @@ sap.ui.define([
 				operator: sap.ui.model.FilterOperator.EQ,
 				value1: sSaleOrderNo
 			});
+			var sIndicatorFilter = new sap.ui.model.Filter({
+				path: "Indicator",
+				operator: sap.ui.model.FilterOperator.EQ,
+				value1: "C"
+			});
 			var filter = [];
-			filter.push(sSaleOrderNoFilter);
+			filter.push(sSaleOrderNoFilter, sIndicatorFilter);
 			this.getOwnerComponent().getModel().read("/ETOHeaderDetailSet", {
 				filters: [filter],
 				success: function (oData, oResponse) {
@@ -358,7 +363,7 @@ sap.ui.define([
 					this.getModel("objectViewModel").setProperty("/busy", false);
 					this._createHeaderDetailsModel();
 
-					sap.m.MessageBox.success("The Sale order has been sent for approval!");
+					sap.m.MessageBox.success(oData.Message);
 
 				}.bind(this),
 				error: function (oError) {
