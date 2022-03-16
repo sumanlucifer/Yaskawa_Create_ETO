@@ -138,6 +138,7 @@ sap.ui.define([
 			this.getOwnerComponent().getModel().read("/ETOHeaderDetailSet", {
 				filters: [filter],
 				success: function (oData, oResponse) {
+					sap.m.MessageBox.information(oData.results[0].Message);
 					// 	this.getModel("objectViewModel").setProperty("/busy", false);
 					this.databuilding(oData.results[0]);
 					this.getAttachments();
