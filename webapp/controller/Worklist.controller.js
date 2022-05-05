@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/MessageBox",
-	"sap/ui/core/format/FileSizeFormat"
-], function (BaseController, JSONModel, formatter, Filter, FilterOperator, MessageBox, FileSizeFormat) {
+	"sap/ui/core/format/FileSizeFormat",
+	"sap/ui/Device"
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, MessageBox, FileSizeFormat, Device) {
 	"use strict";
 
 	return BaseController.extend("com.yaskawa.ETOWorkFlow.controller.Worklist", {
@@ -120,7 +121,7 @@ sap.ui.define([
 
 				return false;
 			}
-
+			this.callItemPopupService(sSaleOrderNo);
 			this.getView().byId("idSaleOrderInput").setEnabled(false);
 			this.getModel("objectViewModel").setProperty("/busy", true);
 			var sSaleOrderNoFilter = new sap.ui.model.Filter({
@@ -152,7 +153,45 @@ sap.ui.define([
 				}.bind(this),
 			});
 		},
+		callItemPopupService: function (sSaleOrderNo) {
+			var sVBlenFilter = new sap.ui.model.Filter({
+				path: "Vbeln",
+				operator: sap.ui.model.FilterOperator.EQ,
+				value1: sSaleOrderNo
+			});
+			var filter = [];
+			filter.push(sVBlenFilter);
+			this.getOwnerComponent().getModel().read("/ETOLineItemSOSet", {
+				filters: [filter],
+				success: function (oData, oResponse) {
 
+					this.openPopFragment(oData.results);
+
+				}.bind(this),
+				error: function (oError) {
+					this.getModel("objectViewModel").setProperty("/busy", false);
+
+				}.bind(this),
+			});
+		},
+
+		openPopFragment: function (response) {
+
+			this.getModel("HeaderDetailsModel").setProperty("/POPItemDataModel", response);
+			if (!this._oItemPopupDialog) {
+				this._oItemPopupDialog = sap.ui.xmlfragment(
+					"com.yaskawa.ETOWorkFlow.view.fragments.ItemPopup", this);
+				this.getView().addDependent(this._oItemPopupDialog);
+			}
+			if (Device.system.desktop) {
+				this._oItemPopupDialog.addStyleClass("sapUiSizeCompact");
+			}
+			this._oItemPopupDialog.open();
+		},
+
+		onCancelItemPopup: function () {
+			this._oItemPopupDialog.close();
+		},
 		onResetSaleOrder: function () {
 
 			this.getView().byId("idSaleOrderInput").setValue("");
