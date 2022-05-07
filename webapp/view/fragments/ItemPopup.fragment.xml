@@ -5,8 +5,8 @@
 			<VBox class="sapUiSmallMargin">
 				<Table alternateRowColors="true" width="auto" id="idGetBOQLineItemsTable" items="{HeaderDetailsModel>/POPItemDataModel}" fixedLayout="false">
 					<columns>
-						<Column visible="{= ${boqCreationModel>/UOM} === 'MT'? true: ${objectViewModel>/BOQQtyType} === 'P' ? true: false }">
-							<CheckBox id="idSelectAllBoq" select="onSelectAllBoq"/>
+						<Column>
+							<CheckBox id="idSelectAllBoq" select="onSelectAllItems"/>
 						</Column>
 						<Column>
 							<Text text="Item No" wrapping="true" wrappingType="Hyphenated"/>
@@ -30,7 +30,7 @@
 					<items>
 						<ColumnListItem>
 							<cells>
-								<CheckBox selected="" select="onBoqSelectChange"/>
+								<CheckBox selected="{HeaderDetailsModel>Selected}"/>
 								<ObjectIdentifier title="{HeaderDetailsModel>ItemNo}"/>
 								<Text text="{HeaderDetailsModel>MatDesc}"/>
 								<Text text="{HeaderDetailsModel>Material}"/>
@@ -45,8 +45,7 @@
 			</VBox>
 		</content>
 		<beginButton>
-			<Button id="idCreateBOQButton" text="{i18n>Confirm}" press="onConfirmCreateBOQPress" type="Emphasized"
-				enabled="{boqCreationModel>/isConfirmButtonEnabled}"></Button>
+			<Button text="{i18n>Confirm}" press="onPressConfirmPopupItems" type="Emphasized" enabled="{boqCreationModel>/isConfirmButtonEnabled}"></Button>
 		</beginButton>
 		<endButton>
 			<Button text="{i18n>Cancel}" press="onCancelItemPopup"></Button>

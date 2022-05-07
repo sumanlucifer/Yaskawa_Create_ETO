@@ -189,6 +189,27 @@ sap.ui.define([
 			this._oItemPopupDialog.open();
 		},
 
+		onSelectAllItems: function (oEvent) {
+			var bState = oEvent.getSource().getSelected();
+
+			var ItemData = this.getModel("HeaderDetailsModel").getProperty("/POPItemDataModel");
+			ItemData.forEach(item => {
+				item.Selected = bState;
+
+			});
+
+			this.getModel("HeaderDetailsModel").refresh();
+		},
+		onPressConfirmPopupItems: function (oEvent) {
+			var aItemData = this.getModel("HeaderDetailsModel").getProperty("/POPItemDataModel");
+			for (var i = 0; i < aItemData.length; i++) {
+				if (!aItemData[i].Selected) {
+					aItemData.splice(i, 1);
+					i--;
+				}
+			}
+			this._oItemPopupDialog.close();
+		},
 		onCancelItemPopup: function () {
 			this._oItemPopupDialog.close();
 		},
@@ -398,7 +419,9 @@ sap.ui.define([
 				"TypeApp": oSalesData.typoofApplicationKey,
 				"TypeOrder": oSalesData.typoofOrderKey,
 				"NoSalesOrder": oSalesData.NoSalesOrder,
-				"Notes": oSalesData.Notes
+				"Notes": oSalesData.Notes,
+				"Indicator": "",
+				"Items": ""
 			};
 
 			this.getOwnerComponent().getModel().create("/ETOHeaderDetailSet", oPayload, {
