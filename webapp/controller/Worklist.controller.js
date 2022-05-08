@@ -208,6 +208,10 @@ sap.ui.define([
 					i--;
 				}
 			}
+
+			this.SelectedPOPupItemNo = Array.prototype.map.call(aItemData, function (item) {
+				return item.ItemNo;
+			}).join(",");
 			this._oItemPopupDialog.close();
 		},
 		onCancelItemPopup: function () {
@@ -421,7 +425,7 @@ sap.ui.define([
 				"NoSalesOrder": oSalesData.NoSalesOrder,
 				"Notes": oSalesData.Notes,
 				"Indicator": "",
-				"Items": ""
+				"Items": this.SelectedPOPupItemNo
 			};
 
 			this.getOwnerComponent().getModel().create("/ETOHeaderDetailSet", oPayload, {
