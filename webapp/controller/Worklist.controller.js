@@ -20,6 +20,7 @@ sap.ui.define([
 			this._createHeaderDetailsModel();
 			this.callDropDownService();
 			this._createAttachmentsModel();
+			this.popupFlag = true;
 
 		},
 
@@ -121,7 +122,11 @@ sap.ui.define([
 
 				return false;
 			}
-			this.callItemPopupService(sSaleOrderNo);
+
+			if (this.popupFlag) {
+				this.callItemPopupService(sSaleOrderNo);
+			}
+
 			this.getView().byId("idSaleOrderInput").setEnabled(false);
 			this.getModel("objectViewModel").setProperty("/busy", true);
 			var sSaleOrderNoFilter = new sap.ui.model.Filter({
@@ -244,6 +249,7 @@ sap.ui.define([
 
 		},
 		onUploadPress: function (oEvent) {
+			this.popupFlag = false;
 			var that = this;
 			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
 			if (sSaleOrderNo === "") {
