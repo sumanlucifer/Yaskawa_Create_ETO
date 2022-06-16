@@ -283,7 +283,8 @@ sap.ui.define([
 				this.getModel("objectViewModel").setProperty("/busy", false);
 				sap.m.MessageBox.success("The File has been uploaded successfully!");
 				this.getView().getModel().refresh();
-				this.onSearchSaleOrder();
+				// this.onSearchSaleOrder();
+				this.getAttachments();
 				this.byId("__FILEUPLOAD").setValue("");
 				this.MainModel.refresh();
 				this.getModel().refresh();
