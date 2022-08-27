@@ -152,9 +152,9 @@
 												<m:VBox class="sapUiSmallMarginBegin" width="100%">
 													<m:Label design="Bold" text="Check List" required="true"/>
 													<m:VBox>
-														<m:CheckBox text="Customer P.O. Scanned and Attached" selected="true"/>
-														<m:CheckBox text="Prel. Order Confirmation Sent and Attached" selected="true"/>
-														<m:CheckBox text="Sales Order Confirmation" selected="true"/>
+														<m:CheckBox id="idScannedAttached" text="Customer P.O. Scanned and Attached" selected="false"/>
+														<m:CheckBox id="idConfirmationSentAttached" text="Prel. Order Confirmation Sent and Attached" selected="false"/>
+														<m:CheckBox id="idSalesOrderConfirmation" text="Sales Order Confirmation" selected="false"/>
 													</m:VBox>
 												</m:VBox>
 											</l:Grid>
@@ -175,9 +175,10 @@
 															<!--<m:Text text="Document Details"/>-->
 															<m:ToolbarSpacer/>
 															<m:HBox>
-																<u:FileUploader buttonOnly="true" multiple="true" icon="sap-icon://attachment" id="__FILEUPLOAD" visible="true" sameFilenameAllowed="false"
-																	buttonText="Add Attachment" change="onUploadPress" filenameLengthExceed="onFileNameLengthExceed" fileSizeExceed="onFileSizeExceed"
-																	maximumFileSize="2" uploadComplete="onComplete" typeMissmatch="handleMissmatch" placeholder="Choose a file" style="Emphasized"/>
+																<!--<u:FileUploader buttonOnly="true" multiple="true" icon="sap-icon://attachment" id="__FILEUPLOAD" visible="true" sameFilenameAllowed="false"-->
+																<!--	buttonText="Add Attachment" change="onUploadPress" filenameLengthExceed="onFileNameLengthExceed" fileSizeExceed="onFileSizeExceed"-->
+																<!--	maximumFileSize="2" uploadComplete="onComplete" typeMissmatch="handleMissmatch" placeholder="Choose a file" style="Emphasized"/>-->
+																<m:Button type="Ghost" text="Add Attachments" icon="sap-icon://attachment" press="onAttachmentsPess"/>
 															</m:HBox>
 														</m:content>
 													</m:OverflowToolbar>
@@ -224,7 +225,7 @@
 			<m:footer>
 				<m:Bar id="__bar1">
 					<m:contentLeft>
-						<m:Button text="Back" width="100px" id="__button9" type="Emphasized" press="onBack" tooltip="Back"/>
+						<!--<m:Button text="Back" width="100px" id="__button9" type="Emphasized" press="onBack" tooltip="Back"/>-->
 					</m:contentLeft>
 					<m:contentRight>
 						<m:Button text="Approve" width="100px" id="Approve" type="Accept" tooltip="Approve" press="completeCpar" visible="false"/>

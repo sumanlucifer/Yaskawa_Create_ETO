@@ -391,12 +391,22 @@ sap.ui.define([
 		},
 
 		onPressSubmit: function () {
+			var oView = this.getView();
 			var sSaleOrderNo = this.getView().byId("idSaleOrderInput").getValue();
 			if (sSaleOrderNo === "") {
 				sap.m.MessageBox.error("Please Enter Sales Order Number and press Go!");
 
 				return;
 			}
+
+			var ScannedAttachedSelection = oView.byId("idScannedAttached").getSelected();
+			var ConfirmationSentAttached = oView.byId("idConfirmationSentAttached").getSelected();
+			var SalesOrderConfirmation = oView.byId("idSalesOrderConfirmation").getSelected();
+			if (!ScannedAttachedSelection && !ConfirmationSentAttached && !SalesOrderConfirmation) {
+				sap.m.MessageBox.error("Please check atleast one item from check list");
+				return;
+			}
+
 			var sTypeofOrder = this.getView().byId("idTypeOfOrder").getSelectedKey();
 			var sTypeofApplication = this.getView().byId("idTypeOfApp").getSelectedKey();
 
@@ -608,7 +618,171 @@ sap.ui.define([
 			this.getRouter().navTo("object", {
 				objectId: selItemNumber
 			});
-		}
+		},
+		onAttachmentsPess: function () {
+			this._getAddAttachments().open();
+		},
+		_getAddAttachments: function () {
+			var _self = this;
+			if (!_self._oDialogSelection2) {
+				_self._oDialogSelection2 = sap.ui.xmlfragment("com.yaskawa.ETOWorkFlow.view.fragments.AddAttachments", _self);
+				_self.getView().addDependent(_self._oDialogSelection2);
+			}
+			return _self._oDialogSelection2;
+		},
+		onCloseAddAttachDialog: function () {
+			this._getAddAttachments().close();
+		},
+
+		// File upload event handelers //		
+		onChange: function (oEvent) {
+			var _ofileUpload = sap.ui.getCore().byId("idFileUploadCollection");
+			var _oFileUploderLength = _ofileUpload.getItems().length;
+			// 			this.fileContent = oEvent.getParameters().files[0];
+			this.fileContent = null;
+			this.vbeln = this.getView().byId("idSaleOrderInput").getValue();
+			this.fileName = oEvent.getParameters().files[0].name;
+			this.fileType = oEvent.getParameters().files[0].type;
+			this.fileSize = oEvent.getParameters().files[0].size;
+
+			if (_oFileUploderLength > 9) {
+				sap.m.MessageBox.alert(
+					"You can not upload more than 10 files. ", {
+						actions: [sap.m.MessageBox.Action.OK],
+						onClose: function (oAction) {
+							if (oAction === "OK") {}
+						}
+
+					});
+
+				jQuery.sap.delayedCall(0, this, function () {
+
+					_ofileUpload.removeItem(_ofileUpload.getItems()[0]);
+
+				});
+			} else {
+				var oModel = this.getOwnerComponent().getModel();
+				var oUploadCollection = oEvent.getSource();
+				var sectoken = oModel.getSecurityToken();
+				var oCustomerHeaderToken = new sap.m.UploadCollectionParameter({
+					name: "x-csrf-token",
+					value: sectoken
+				});
+				oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
+			}
+
+		},
+		// 		onTypeMissmatch: function (oEvent) {
+		// 			var _oFileTypeExt = oEvent.getParameters().files[0].fileType;
+		// 			sap.m.MessageBox.alert(
+		// 				"You can not upload " + _oFileTypeExt + " file type", {
+		// 					actions: [sap.m.MessageBox.Action.OK],
+		// 					onClose: function (oAction) {
+		// 						if (oAction === "OK") {}
+		// 					}
+
+		// 				});
+
+		// 			//sap.m.MessageToast.show("You can not upload " + _oFileTypeExt + " file type");
+		// 		},
+		// 		onFileSizeExceed: function (oEvent) {
+		// 			var oUploadCollection = this.getView().byId("idFileUploadCollection");
+		// 			var fileSize = oEvent.getParameter("fileSize"),
+		// 				fileName = oEvent.getParameter("fileName");
+		// 			/*sap.m.MessageToast.show("The chosen file '" + fileName + "' is " + fileSize + " MB big, this exceeds the maximum filesize of " +
+		// 				oUploadCollection.getMaximumFileSize() + " MB.");*/
+		// 			sap.m.MessageBox.alert(
+		// 				"The chosen file '" + fileName + "' is " + fileSize + " MB big, this exceeds the maximum filesize of " +
+		// 				oUploadCollection.getMaximumFileSize() + " MB.", {
+		// 					actions: [sap.m.MessageBox.Action.OK],
+		// 					onClose: function (oAction) {
+		// 						if (oAction === "OK") {}
+		// 					}
+
+		// 				});
+
+		// 		},
+
+		onStartUpload: function (oEvent) {
+			var oUploadCollection = sap.ui.getCore().byId("idFileUploadCollection");
+			var cFiles = oUploadCollection.getItems().length;
+			this._allItems = oUploadCollection.getItems();
+			this._responseReceivedCnt = 0;
+			if (cFiles > 10) {
+				sap.ui.core.BusyIndicator.hide();
+				sap.m.MessageBox.error("Maximum file count per interaction is 10");
+			} else {
+				var uploadInfo = "";
+				oUploadCollection.upload();
+				uploadInfo = cFiles + " file(s)";
+			}
+		},
+
+		onFilenameLengthExceed: function (oEvent) {
+			/*	var fileNameLengthExceedErrorMsg = this.getView().getModel("i18n").getResourceBundle().getText("fileNameLengthExceedErrorMsg");
+
+				sap.m.MessageToast.show(fileNameLengthExceedErrorMsg);*/
+
+			sap.m.MessageBox.alert(
+				"File name can't be exceed 55 characters.", {
+					actions: [sap.m.MessageBox.Action.OK],
+					onClose: function (oAction) {
+						if (oAction === "OK") {}
+					}
+
+				});
+		},
+
+		onBeforeUploadStarts: function (oEvent) {
+			var _self = this;
+			var fileContent = "";
+			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
+				name: "slug",
+				// value: oEvent.getParameter("fileName") + "|" + _self._oMessageId
+				value: this.fileContent + "|" + this.vbeln + "|" + this.fileName + "|" + this.fileType + "|" + this.fileSize
+					// value: "" + "|" + this.vbeln + "|" + this.fileName + "|" + this.fileType + "|" + this.fileSize
+			});
+
+			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
+			setTimeout(function () {}, 40000);
+		},
+		onUploadComplete: function (oEvent) {
+			var _that = this;
+			var oUploadCollection;
+			oUploadCollection = sap.ui.getCore().byId("idFileUploadCollection");
+			var sUploadedFileName = "";
+			var uploadError = "";
+			var _responseReceivedlen = "";
+			for (var j = 0; j < oEvent.getParameter("files").length; j++) {
+				sUploadedFileName = oEvent.getParameter("files")[j].fileName;
+				for (var i = 0; i < this._allItems.length; i++) {
+					if (this._allItems[i].getFileName() === sUploadedFileName) {
+						_responseReceivedlen = oEvent.getParameter("files").length;
+						this._responseReceivedCnt = 0 + this._responseReceivedCnt + _responseReceivedlen;
+						if (oEvent.getParameter("files")[j].status === 201) {
+							oUploadCollection.removeItem(this._allItems[i]);
+							_that.getView().byId("idAttachmentsTable").getModel("AttachmentsModel").refresh();
+						} else {
+							// 			var responceFile = oEvent.getParameter("files")[j].reponse;
+							// 			var slpliteString = responceFile.split("/");
+							// 			uploadError = slpliteString[1].slice(3);
+							// 			this._uploadErrorOccured = true;
+							// 			sap.m.MessageBox.show(uploadError, sap.m.MessageBox.Icon.ERROR);
+							sap.ui.core.BusyIndicator.hide();
+							break;
+						}
+					}
+
+				}
+
+			}
+
+			if (this._responseReceivedCnt === this._allItems.length) {
+				var _self = this;
+			}
+
+		},
+		// End of File upload event handelers //	
 
 	});
 });
