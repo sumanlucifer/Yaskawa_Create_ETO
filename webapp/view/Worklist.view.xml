@@ -175,10 +175,10 @@
 															<!--<m:Text text="Document Details"/>-->
 															<m:ToolbarSpacer/>
 															<m:HBox>
-																<!--<u:FileUploader buttonOnly="true" multiple="true" icon="sap-icon://attachment" id="__FILEUPLOAD" visible="true" sameFilenameAllowed="false"-->
-																<!--	buttonText="Add Attachment" change="onUploadPress" filenameLengthExceed="onFileNameLengthExceed" fileSizeExceed="onFileSizeExceed"-->
-																<!--	maximumFileSize="2" uploadComplete="onComplete" typeMissmatch="handleMissmatch" placeholder="Choose a file" style="Emphasized"/>-->
-																<m:Button type="Ghost" text="Add Attachments" icon="sap-icon://attachment" press="onAttachmentsPess"/>
+																<u:FileUploader buttonOnly="true" multiple="true" icon="sap-icon://attachment" id="__FILEUPLOAD" visible="true" sameFilenameAllowed="false"
+																	buttonText="Add Attachment" change="onUploadPress" filenameLengthExceed="onFileNameLengthExceed" fileSizeExceed="onFileSizeExceed"
+																	maximumFileSize="2" uploadComplete="onComplete" typeMissmatch="handleMissmatch" placeholder="Choose a file" style="Emphasized"/>
+																<!--<m:Button type="Ghost" text="Add Attachments" icon="sap-icon://attachment" press="onAttachmentsPess"/>-->
 															</m:HBox>
 														</m:content>
 													</m:OverflowToolbar>
